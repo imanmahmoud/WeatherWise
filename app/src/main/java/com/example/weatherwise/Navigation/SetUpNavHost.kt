@@ -1,7 +1,6 @@
 package com.example.weatherwise.Navigation
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,14 +19,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.weatherwise.R
 import com.example.weatherwise.alert.AlertScreen
 import com.example.weatherwise.favourite.FavouriteScreen
-import com.example.weatherwise.home.HomeScreen
+import com.example.weatherwise.home.view.HomeScreen
+import com.example.weatherwise.home.HomeViewModel
 import com.example.weatherwise.settings.SettingsScreen
 import com.example.weatherwise.ui.theme.Purple
 import com.example.weatherwise.ui.theme.PurpleBlue
 import com.example.weatherwise.ui.theme.PurplePink
 
 @Composable
-fun SetUpNavHost(context: Context){
+fun SetUpNavHost(context: Context, homeViewModel: HomeViewModel){
     var navController = rememberNavController()
 
 
@@ -65,7 +65,7 @@ fun SetUpNavHost(context: Context){
                 startDestination = ScreenRoutes.HomeRoute
             ){
                 composable<ScreenRoutes.HomeRoute> {
-                    HomeScreen()
+                    HomeScreen(homeViewModel)
 
                 }
                 composable<ScreenRoutes.FavouriteRoute> {
