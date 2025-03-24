@@ -4,36 +4,36 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import com.example.weatherwise.Navigation.SetUpNavHost
-import com.example.weatherwise.home.HomeScreen
-import com.example.weatherwise.ui.theme.Purple
-import com.example.weatherwise.ui.theme.PurpleBlue
-import com.example.weatherwise.ui.theme.PurplePink
-import com.example.weatherwise.ui.theme.WeatherWiseTheme
+/*import com.example.weatherwise.data.local.WeatherDatabase
+import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl*/
+import com.example.weatherwise.data.remote.RetrofitHelper
+import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
+import com.example.weatherwise.data.repo.WeatherRepositoryImpl
+import com.example.weatherwise.home.HomeViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+       // val db = WeatherDatabase.getInstance(context = this)
        enableEdgeToEdge()
         setContent {
 
-            SetUpNavHost(this)
+            val homeViewModel = ViewModelProvider(
+                this,
+                HomeViewModel.HomeFactory(
+                    WeatherRepositoryImpl.getInstance(
+                        WeatherRemoteDataSourceImpl(RetrofitHelper.service)
+                        /*,WeatherLocalDataSourceImpl(db.weatherDao())*/
+                    )
+                )
+            )
+                .get(HomeViewModel::class.java)
+
+
+
+            SetUpNavHost(this,homeViewModel)
 
         }
     }
