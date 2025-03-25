@@ -51,7 +51,7 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
     val context = LocalContext.current
 
     // Initialize Places API (outside ViewModel)
-    Places.initializeWithNewPlacesApiEnabled(context,"" )
+    Places.initializeWithNewPlacesApiEnabled(context,"AIzaSyCWWYJtCejwVw1rfb7WjiMYTc23XtQF2SQ" )
     val placesClient: PlacesClient = Places.createClient(context)
 
     // Create ViewModel with custom factory
