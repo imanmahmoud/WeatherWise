@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.foundation.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -89,6 +90,14 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
     implementation ("com.airbnb.android:lottie-compose:6.6.3")
 
+
+    //Location
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+    //Google Maps in Jetpack Compose
+    implementation("com.google.maps.android:maps-compose:6.4.1")
+    //Google Places API and Jetpack Compose support for Places
+    implementation("com.google.android.libraries.places:places:3.1.0")
+    implementation("com.google.maps.android:places-compose:0.1.2")
 
 
 }
