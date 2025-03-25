@@ -79,14 +79,14 @@ fun HomeScreen(viewModel: HomeViewModel) {
         Text("Today", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White,modifier = Modifier.align(Alignment.Start).padding(bottom = 10.dp))
 
 
-       // HourlyForecastList(getTodayForecast())
+        HourlyForecastList(getTodayForecast())
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Weekly Forecast
         Text("7-Day Forecast", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White,modifier = Modifier.align(Alignment.Start).padding(bottom = 10.dp))
 
-       // DailyForecastCard()
+       DailyForecastCard()
     }
 }
 

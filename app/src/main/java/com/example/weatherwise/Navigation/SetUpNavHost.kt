@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.weatherwise.R
 import com.example.weatherwise.alert.AlertScreen
 import com.example.weatherwise.favourite.FavouriteScreen
+import com.example.weatherwise.favourite.map.MapScreen
 import com.example.weatherwise.home.view.HomeScreen
 import com.example.weatherwise.home.HomeViewModel
 import com.example.weatherwise.settings.SettingsScreen
@@ -70,7 +71,7 @@ fun SetUpNavHost(context: Context, homeViewModel: HomeViewModel){
                 }
                 composable<ScreenRoutes.FavouriteRoute> {
 
-                    FavouriteScreen()
+                    FavouriteScreen(onNavigateToFavouriteMap = {navController.navigate(ScreenRoutes.MapRoute)})
 
                 }
                 composable<ScreenRoutes.AlertRoute> {
@@ -78,6 +79,9 @@ fun SetUpNavHost(context: Context, homeViewModel: HomeViewModel){
                 }
                 composable<ScreenRoutes.SettingsRoute> {
                     SettingsScreen()
+                }
+                composable<ScreenRoutes.MapRoute> {
+                    MapScreen()
                 }
 
             }

@@ -11,6 +11,8 @@ sealed class ScreenRoutes {
     object FavouriteRoute : ScreenRoutes()
     @Serializable
     object SettingsRoute : ScreenRoutes()
+    @Serializable
+    object MapRoute : ScreenRoutes()
 
 }
 
