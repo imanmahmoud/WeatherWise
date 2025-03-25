@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherwise.BuildConfig
 import com.example.weatherwise.R
 
 import com.example.weatherwise.data.remote.RetrofitHelper
@@ -51,7 +52,7 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
     val context = LocalContext.current
 
     // Initialize Places API (outside ViewModel)
-    Places.initializeWithNewPlacesApiEnabled(context,"AIzaSyCWWYJtCejwVw1rfb7WjiMYTc23XtQF2SQ" )
+    Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.MAPS_API_KEY )
     val placesClient: PlacesClient = Places.createClient(context)
 
     // Create ViewModel with custom factory
