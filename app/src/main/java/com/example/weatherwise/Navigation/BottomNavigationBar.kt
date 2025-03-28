@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -40,7 +41,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         ),
         NavigationItem(
             title = "Alert",
-            icon = Icons.Default.Notifications,
+            icon = Icons.Default.NotificationsActive,
             route = ScreenRoutes.AlertRoute
         ),
         NavigationItem(
@@ -64,6 +65,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                 onClick = {
                     selectedNavigationIndex.intValue = index
                     navController.navigate(item.route)
+                   // navController.popBackStack(item.route, false)
                 },
                 icon = {
                     Icon(imageVector = item.icon, contentDescription = item.title)

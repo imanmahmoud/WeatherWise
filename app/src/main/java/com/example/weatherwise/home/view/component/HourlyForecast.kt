@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.weatherwise.R
+import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.ui.theme.LightPurple
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun HourlyForecastItem(forecast: HourlyForecast) {
-    val iconUrl = "https://openweathermap.org/img/wn/${forecast.icon}@2x.png"
+fun HourlyForecastItem(hourlyForecast: CurrentWeatherResponse) {
+    val iconUrl = "https://openweathermap.org/img/wn/${hourlyForecast.weather[0].icon}@2x.png"
 
     Card(
         modifier = Modifier.padding(end = 10.dp, bottom = 12.dp),
@@ -40,7 +40,7 @@ fun HourlyForecastItem(forecast: HourlyForecast) {
 
 
         ) {
-            Text(forecast.time, fontSize = 14.sp, color = Color.White)
+            Text(hourlyForecast.formattedDt, fontSize = 14.sp, color = Color.White)
 
 
 
@@ -54,21 +54,22 @@ fun HourlyForecastItem(forecast: HourlyForecast) {
                 modifier = Modifier.size(50.dp)
             )*/
 
-            Text(forecast.temperature, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Text("${hourlyForecast.main.temp.toInt()}°c", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
         }
     }
 
 }
 
 @Composable
-fun HourlyForecastList(forecastList: List<HourlyForecast>) {
+fun HourlyForecastList(hourlyForecastList: List<CurrentWeatherResponse>) {
     LazyRow(modifier = Modifier.fillMaxWidth()) {
-        items(forecastList) { forecast ->
+        items(hourlyForecastList) { forecast ->
             HourlyForecastItem(forecast)
         }
     }
 }
 
+/*
 // Sample Data
 data class HourlyForecast(val time: String, val temperature: String, val icon: Int)
 
@@ -80,4 +81,4 @@ fun getTodayForecast(): List<HourlyForecast> {
         HourlyForecast("3 PM", "23°", R.drawable.ic_launcher_foreground),
         HourlyForecast("5 PM", "23°", R.drawable.ic_launcher_foreground)
     )
-}
+}*/
