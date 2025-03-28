@@ -11,7 +11,7 @@ import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl*/
 import com.example.weatherwise.data.remote.RetrofitHelper
 import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
 import com.example.weatherwise.data.repo.WeatherRepositoryImpl
-import com.example.weatherwise.home.HomeViewModel
+import com.example.weatherwise.home.viewModel.HomeViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

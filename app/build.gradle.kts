@@ -105,5 +105,9 @@ dependencies {
     implementation("com.google.android.libraries.places:places:3.1.0")
     implementation("com.google.maps.android:places-compose:0.1.2")
 
+    //icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
+
 
 }

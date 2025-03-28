@@ -12,7 +12,7 @@ data class CurrentWeatherResponse(
     val wind: Wind,
     val clouds: Clouds,
     val dt: Int,
-    val sys: Sys,
+   // val sys: Sys,
    // val timezone: Int,
     val id: Int=0,
     val name: String="",

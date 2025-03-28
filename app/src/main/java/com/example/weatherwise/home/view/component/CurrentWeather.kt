@@ -33,12 +33,12 @@ import com.example.weatherwise.utils.WeatherIconHelper
 
 
 @Composable
-fun CurrentWeather(data: CurrentWeatherResponse) {
+fun CurrentWeather(currentWeather: CurrentWeatherResponse) {
 
-    val image = WeatherIconHelper.getWeatherIcon(data.weather[0].main)
+    val image = WeatherIconHelper.getWeatherIcon(currentWeather.weather[0].main)
 
     Row {
-        Text(data.name, fontSize = 32.sp, color = Color.White,modifier = Modifier.padding(end = 6.dp, bottom = 18.dp))
+        Text(currentWeather.name, fontSize = 32.sp, color = Color.White,modifier = Modifier.padding(end = 6.dp, bottom = 18.dp))
         Box(modifier = Modifier.padding(top = 8.dp)){
             Icon(
                 imageVector = Icons.Default.LocationOn,
@@ -50,7 +50,7 @@ fun CurrentWeather(data: CurrentWeatherResponse) {
 
 
     }
-    Text(data.weather[0].description, fontSize = 24.sp, color = Color.White)
+    Text(currentWeather.weather[0].description, fontSize = 24.sp, color = Color.White)
 
     Spacer(modifier = Modifier.height(8.dp))
 
@@ -61,20 +61,20 @@ fun CurrentWeather(data: CurrentWeatherResponse) {
         // contentScale = ContentScale.Fit
     )
     Row (modifier = Modifier.padding(bottom = 16.dp)){
-        Text("${data.main.temp}", fontSize = 60.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Text("${currentWeather.main.temp.toInt()}", fontSize = 60.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Text("°c", fontSize = 32.sp, fontWeight = FontWeight.Normal, color = Color.White)
     }
 
-    Text("Feels like ${data.main.feels_like}°", fontSize = 18.sp, color = Color.White, modifier = Modifier.padding(bottom = 8.dp))
-    Text(data.formattedDt, fontSize = 18.sp, color = Color.White, modifier = Modifier.padding(bottom = 16.dp))
+    Text("Feels like ${currentWeather.main.feels_like.toInt()}°c", fontSize = 18.sp, color = Color.White, modifier = Modifier.padding(bottom = 8.dp))
+    Text(currentWeather.formattedDt, fontSize = 18.sp, color = Color.White, modifier = Modifier.padding(bottom = 16.dp))
 
-    WeatherDetailsCard(data)
+    WeatherDetailsCard(currentWeather)
 
 
 }
 
 @Composable
-fun WeatherDetailsCard(data: CurrentWeatherResponse) {
+fun WeatherDetailsCard(currentWeather: CurrentWeatherResponse) {
     Card(
         modifier = Modifier.wrapContentSize().padding(bottom = 12.dp),
         shape = RoundedCornerShape(12.dp),
@@ -84,10 +84,10 @@ fun WeatherDetailsCard(data: CurrentWeatherResponse) {
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            WeatherDetailItem("${data.clouds.all}%", "Clouds", R.drawable.cloud)
-            WeatherDetailItem("${data.main.humidity}%", "Humidity", R.drawable.humidity)
-            WeatherDetailItem("${data.wind.speed} km/h", "Wind Speed", R.drawable.wind_speed)
-            WeatherDetailItem("${data.main.pressure} hpa", "Pressure", R.drawable.pressure)
+            WeatherDetailItem("${currentWeather.clouds.all}%", "Clouds", R.drawable.cloud)
+            WeatherDetailItem("${currentWeather.main.humidity}%", "Humidity", R.drawable.humidity)
+            WeatherDetailItem("${currentWeather.wind.speed} km/h", "Wind Speed", R.drawable.wind_speed)
+            WeatherDetailItem("${currentWeather.main.pressure} hpa", "Pressure", R.drawable.pressure)
         }
     }
 }

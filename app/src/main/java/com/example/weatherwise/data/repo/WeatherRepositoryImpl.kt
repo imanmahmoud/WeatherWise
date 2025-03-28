@@ -1,10 +1,12 @@
-
 package com.example.weatherwise.data.repo
+
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
+import com.example.weatherwise.data.model.forecastWeather.ForecastWeatherResponse
 import com.example.weatherwise.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
-class WeatherRepositoryImpl private constructor(private val remoteDataSource: RemoteDataSource/*, private val localDataSource: LocalDataSource*/): WeatherRepository {
+class WeatherRepositoryImpl private constructor(private val remoteDataSource: RemoteDataSource/*, private val localDataSource: LocalDataSource*/) :
+    WeatherRepository {
 
     companion object {
         private var Instance: WeatherRepositoryImpl? = null
@@ -18,32 +20,45 @@ class WeatherRepositoryImpl private constructor(private val remoteDataSource: Re
 
     }
 
-    override suspend fun getCurrentWeather(latitude: Double, longitude: Double, apiKey: String): Flow<CurrentWeatherResponse?> {
+    override suspend fun getCurrentWeather(
+        latitude: Double,
+        longitude: Double,
+        apiKey: String,
+        units: String,
+        language: String
+    ): Flow<CurrentWeatherResponse/*?*/> {
         return remoteDataSource.getCurrentWeather(latitude, longitude, apiKey)
     }
 
-
-
-
-
-   /* override suspend fun getAllProducts(isOnline: Boolean) : Flow<List<Product>?> {
-        if (isOnline) {
-            return remoteDataSource.getAllProducts()
-        }
-        else {
-            //return remoteDataSource.getAllProducts()
-            return localDataSource.getAllProducts()
-        }
-
+    override suspend fun getForecastWeather(
+        latitude: Double,
+        longitude: Double,
+        apiKey: String,
+        units: String,
+        language: String
+    ): Flow<ForecastWeatherResponse> {
+        return remoteDataSource.getForecastWeather(latitude, longitude, apiKey)
     }
 
-    override suspend fun insertProduct(product: Product): Long {
-        return localDataSource.insertProduct(product)
 
-    }
-    override suspend fun deleteProduct(product: Product): Int {
-        return localDataSource.deleteProduct(product)
-    }*/
+    /* override suspend fun getAllProducts(isOnline: Boolean) : Flow<List<Product>?> {
+         if (isOnline) {
+             return remoteDataSource.getAllProducts()
+         }
+         else {
+             //return remoteDataSource.getAllProducts()
+             return localDataSource.getAllProducts()
+         }
+
+     }
+
+     override suspend fun insertProduct(product: Product): Long {
+         return localDataSource.insertProduct(product)
+
+     }
+     override suspend fun deleteProduct(product: Product): Int {
+         return localDataSource.deleteProduct(product)
+     }*/
 
 
 }

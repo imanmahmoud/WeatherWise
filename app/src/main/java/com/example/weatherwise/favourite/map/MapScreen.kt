@@ -32,6 +32,8 @@ import com.example.weatherwise.R
 import com.example.weatherwise.data.remote.RetrofitHelper
 import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
 import com.example.weatherwise.data.repo.WeatherRepositoryImpl
+import com.example.weatherwise.ui.theme.LightPurple
+import com.example.weatherwise.ui.theme.PurplePink
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -42,6 +44,7 @@ import com.google.android.libraries.places.compose.autocomplete.models.Autocompl
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
+import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 
@@ -52,6 +55,7 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
     val context = LocalContext.current
 
     // Initialize Places API (outside ViewModel)
+
     Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.MAPS_API_KEY )
     val placesClient: PlacesClient = Places.createClient(context)
 
@@ -100,18 +104,18 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties = MapProperties(mapType = MapType.HYBRID),
+            properties = MapProperties(mapType = MapType.NORMAL),
             onMapClick = { latLng ->
                 markerState.position = latLng
                 viewModel.updateSelectedLocation(latLng)
             }
         ) {
 
-         /*   Marker(
+           Marker(
                 state = markerState,
                 title = "Selected Location",
                 snippet = "Marker at selected location"
-            )*/
+            )
         }
 
         PlacesAutocompleteTextField(
@@ -136,6 +140,7 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
 
 
         selectedLocation?.let { location ->
+
            /* val favouriteLocation = FavouriteLocation(location.latitude,location.longitude)
             val address = getAddressFromLocation(favouriteLocation)*/
             Card(
@@ -159,7 +164,7 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
 
                     Button(
                         onClick = { viewModel.insertFavouriteLocation(selectedLocation!!.latitude, selectedLocation!!.longitude) },
-                        colors = ButtonDefaults.buttonColors(colorResource(R.color.teal_700)),
+                        colors = ButtonDefaults.buttonColors(PurplePink/*colorResource(R.color.teal_700)*/),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -174,4 +179,8 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
             }
         }
     }
+}
+
+class FavouriteLocation(latitude: Double, longitude: Double) {
+
 }

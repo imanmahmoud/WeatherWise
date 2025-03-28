@@ -5,7 +5,7 @@ import com.example.weatherwise.R
 object WeatherIconHelper {
     fun getWeatherIcon(weatherMain: String): Int {
         return when (weatherMain) {
-            "Clouds" -> R.drawable.mostly_cloudy
+            "Clouds" -> R.drawable.mostly_cloud
             "Clear" -> R.drawable.sunny_weather
             "Rain" -> R.drawable.rain_weather
             "Snow" -> R.drawable.snow_weather

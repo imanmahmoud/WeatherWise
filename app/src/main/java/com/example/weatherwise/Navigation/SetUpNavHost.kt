@@ -21,7 +21,7 @@ import com.example.weatherwise.alert.AlertScreen
 import com.example.weatherwise.favourite.FavouriteScreen
 import com.example.weatherwise.favourite.map.MapScreen
 import com.example.weatherwise.home.view.HomeScreen
-import com.example.weatherwise.home.HomeViewModel
+import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.settings.SettingsScreen
 import com.example.weatherwise.ui.theme.Purple
 import com.example.weatherwise.ui.theme.PurpleBlue
