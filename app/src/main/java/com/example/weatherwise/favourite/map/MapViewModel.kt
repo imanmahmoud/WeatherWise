@@ -22,12 +22,29 @@ import kotlinx.coroutines.launch
 
 class MapViewModel(private val placesClient: PlacesClient, private val repository: WeatherRepository): ViewModel() {
 
-    class MapScreenViewModelFactory(private val placesClient: PlacesClient,private val repository: WeatherRepository) : ViewModelProvider.Factory
+
+//Old ONE
+    /*class MapScreenViewModelFactory(private val placesClient: PlacesClient,private val repository: WeatherRepository) : ViewModelProvider.Factory
     {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return MapViewModel(placesClient,repository) as T
         }
+    }*/
+
+
+    class MapScreenViewModelFactory(
+        private val placesClient: PlacesClient,
+        private val repository: WeatherRepository
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MapViewModel(placesClient, repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
     }
+
 
     private val mutableSearchText = MutableStateFlow("")
     val searchText: StateFlow<String> = mutableSearchText

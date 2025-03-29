@@ -1,18 +1,20 @@
 package com.example.weatherwise.data.repo
 
+import com.example.weatherwise.data.local.LocalDataSource
+import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.data.model.forecastWeather.ForecastWeatherResponse
 import com.example.weatherwise.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
-class WeatherRepositoryImpl private constructor(private val remoteDataSource: RemoteDataSource/*, private val localDataSource: LocalDataSource*/) :
+class WeatherRepositoryImpl private constructor(private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) :
     WeatherRepository {
 
     companion object {
         private var Instance: WeatherRepositoryImpl? = null
-        fun getInstance(remoteDataSource: RemoteDataSource/*, localDataSource: LocalDataSource*/): WeatherRepository {
+        fun getInstance(remoteDataSource: RemoteDataSource, localDataSource: LocalDataSource): WeatherRepository {
             return Instance ?: synchronized(this) {
-                val instance = WeatherRepositoryImpl(remoteDataSource/*, localDataSource*/)
+                val instance = WeatherRepositoryImpl(remoteDataSource, localDataSource)
                 Instance = instance
                 instance
             }
@@ -38,6 +40,18 @@ class WeatherRepositoryImpl private constructor(private val remoteDataSource: Re
         language: String
     ): Flow<ForecastWeatherResponse> {
         return remoteDataSource.getForecastWeather(latitude, longitude, apiKey)
+    }
+
+    override suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>> {
+        return localDataSource.getAllFavouriteLocations()
+    }
+
+    override suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation): Long {
+      return localDataSource.insertFavouriteLocation(favouriteLocation)
+    }
+
+    override suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation): Int {
+        return localDataSource.deleteFavouriteLocation(favouriteLocation)
     }
 
 

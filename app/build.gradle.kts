@@ -107,6 +107,8 @@ dependencies {
 
     //icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    //Google Maps in Jetpack Compose
+    implementation("com.google.code.gson:gson:2.10.1")
 
 
 

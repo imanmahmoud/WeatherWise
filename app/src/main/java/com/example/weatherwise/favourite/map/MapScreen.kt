@@ -28,6 +28,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherwise.BuildConfig
 import com.example.weatherwise.R
+import com.example.weatherwise.WeatherWiseApplication
+import com.example.weatherwise.data.local.WeatherDatabase
+import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl
 
 import com.example.weatherwise.data.remote.RetrofitHelper
 import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
@@ -54,9 +57,25 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
    // showFAB.value = false
     val context = LocalContext.current
 
-    // Initialize Places API (outside ViewModel)
+    val application = context.applicationContext as WeatherWiseApplication
+    val placesClient = application.placesClient
 
-    Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.MAPS_API_KEY )
+    val db = WeatherDatabase.getInstance(context = context)
+
+    val mapScreenFactory = MapViewModel.MapScreenViewModelFactory(
+        placesClient = placesClient,
+        repository = WeatherRepositoryImpl.getInstance(
+            WeatherRemoteDataSourceImpl(RetrofitHelper.service),
+            WeatherLocalDataSourceImpl(db.weatherDao())
+        )
+    )
+    val viewModel: MapViewModel = viewModel(factory = mapScreenFactory)
+
+
+
+//OLD ONE
+    // Initialize Places API (outside ViewModel)
+   /* Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.MAPS_API_KEY )
     val placesClient: PlacesClient = Places.createClient(context)
 
     // Create ViewModel with custom factory
@@ -64,10 +83,10 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
         placesClient = placesClient,
         repository = WeatherRepositoryImpl.getInstance(
             WeatherRemoteDataSourceImpl(RetrofitHelper.service),
-            /*WeatherLocalDataSource(WeatherDatabase.getInstance(context).getWeatherDao())*/
+           WeatherLocalDataSourceImpl(db.weatherDao())
         )
     )
-    val viewModel: MapViewModel = viewModel(factory = mapScreenFactory)
+    val viewModel: MapViewModel = viewModel(factory = mapScreenFactory)*/
 
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val predictions by viewModel.predictions.collectAsStateWithLifecycle()
@@ -181,6 +200,4 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
     }
 }
 
-class FavouriteLocation(latitude: Double, longitude: Double) {
-
-}
+//class FavouriteLocation(latitude: Double, longitude: Double)
