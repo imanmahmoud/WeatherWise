@@ -1,14 +1,15 @@
 package com.example.weatherwise.home.view
 
+import android.location.Location
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,15 +26,34 @@ import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.home.view.component.CurrentWeather
 import com.example.weatherwise.home.view.component.DailyForecastCard
 import com.example.weatherwise.home.view.component.HourlyForecastList
+import kotlinx.coroutines.flow.StateFlow
 
 //@Preview
 
-const val apiKey = "5a46ee8289123314e05b723b9e36d002"
+
 
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, locationState: StateFlow<Location?>) {
     val context = LocalContext.current
+
+    val location by locationState.collectAsStateWithLifecycle()
+
+
+    LaunchedEffect(location) {
+        location?.let {
+            viewModel.fetchWeatherIfLocationChanged(it)
+        }
+    }
+
+    /*LaunchedEffect(location) {
+        location?.let {
+            viewModel.fetchCurrentWeather(it.latitude, it.longitude, apiKey)
+            viewModel.fetchWeatherForecast(it.latitude, it.longitude, apiKey)
+        }
+    }*/
+
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -44,10 +64,19 @@ fun HomeScreen(viewModel: HomeViewModel) {
             .verticalScroll(rememberScrollState()),
     ) {
 
-        LaunchedEffect(Unit) {
+        /*val location by locationState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(location) {
+            location?.let {
+                viewModel.fetchCurrentWeather(it.latitude, it.longitude, apiKey)
+                viewModel.fetchWeatherForecast(it.latitude, it.longitude, apiKey)
+            }
+        }*/
+
+       /* LaunchedEffect(Unit) {
             viewModel.fetchCurrentWeather(31.265, 29.989, apiKey)
             viewModel.fetchWeatherForecast(31.265, 29.989, apiKey)
-        }
+        }*/
 
         val currentWeatherState by viewModel.currentWeatherState.collectAsStateWithLifecycle()
         val hourlyForecastState by viewModel.hourlyForecastState.collectAsStateWithLifecycle()

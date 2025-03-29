@@ -1,6 +1,7 @@
 package com.example.weatherwise.home.viewModel
 
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +18,8 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
+const val apiKey = "5a46ee8289123314e05b723b9e36d002"
+
 class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
 
     private val _currentWeatherState = MutableStateFlow<Result<CurrentWeatherResponse>>(Result.Loading())
@@ -31,11 +34,24 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
     /*private val _message = MutableSharedFlow<String>()
     val message = _message.asSharedFlow()*/
 
+    private var lastFetchedLocation: Location? = null
+
+    fun fetchWeatherIfLocationChanged(newLocation: Location) {
+        if (lastFetchedLocation == null ||
+            newLocation.latitude != lastFetchedLocation?.latitude ||
+            newLocation.longitude != lastFetchedLocation?.longitude
+        ) {
+            lastFetchedLocation = newLocation
+            fetchCurrentWeather(newLocation.latitude, newLocation.longitude, apiKey)
+            fetchWeatherForecast(newLocation.latitude, newLocation.longitude, apiKey)
+        }
+    }
+
 
 
     fun fetchCurrentWeather(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch {
-           // Log.i("TAG", "fetchWeather: before tryyyyyy")
+            Log.i("TAG", "fetchWeather: before tryyyyyy")
                 try {
                    // Log.i("TAG", "fetchWeather: after calling repo")
                     repo.getCurrentWeather(lat, lon, apiKey)

@@ -1,6 +1,7 @@
 package com.example.weatherwise.Navigation
 
 import android.content.Context
+import android.location.Location
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,9 +27,14 @@ import com.example.weatherwise.settings.SettingsScreen
 import com.example.weatherwise.ui.theme.Purple
 import com.example.weatherwise.ui.theme.PurpleBlue
 import com.example.weatherwise.ui.theme.PurplePink
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun SetUpNavHost(context: Context, homeViewModel: HomeViewModel){
+fun SetUpNavHost(
+    context: Context,
+    homeViewModel: HomeViewModel,
+    locationState: StateFlow<Location?>
+){
     var navController = rememberNavController()
 
 
@@ -66,7 +72,7 @@ fun SetUpNavHost(context: Context, homeViewModel: HomeViewModel){
                 startDestination = ScreenRoutes.HomeRoute
             ){
                 composable<ScreenRoutes.HomeRoute> {
-                    HomeScreen(homeViewModel)
+                    HomeScreen(homeViewModel,locationState)
 
                 }
                 composable<ScreenRoutes.FavouriteRoute> {
