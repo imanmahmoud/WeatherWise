@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.weatherwise"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.compose.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -107,6 +108,10 @@ dependencies {
 
     //icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    //Google Maps in Jetpack Compose
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation("androidx.compose.material:material:1.7.8")
 
 
 

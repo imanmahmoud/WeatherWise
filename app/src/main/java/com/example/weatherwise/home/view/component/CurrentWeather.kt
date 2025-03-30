@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.example.weatherwise.R
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.ui.theme.LightPurple
+import com.example.weatherwise.ui.theme.LightPurpleO
 import com.example.weatherwise.utils.WeatherIconHelper
 
 
@@ -78,7 +79,7 @@ fun WeatherDetailsCard(currentWeather: CurrentWeatherResponse) {
     Card(
         modifier = Modifier.wrapContentSize().padding(bottom = 12.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = LightPurple)
+        colors = CardDefaults.cardColors(containerColor = LightPurpleO)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),

@@ -22,6 +22,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.ui.theme.LightPurple
+import com.example.weatherwise.ui.theme.LightPurpleO
 import com.example.weatherwise.utils.WeatherIconHelper
 
 
@@ -84,7 +85,7 @@ fun DailyForecastCard(dailyForecastList: List<CurrentWeatherResponse>) {
             .fillMaxWidth()
             .padding(bottom = 12.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = LightPurple)
+        colors = CardDefaults.cardColors(containerColor = LightPurpleO)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Column {

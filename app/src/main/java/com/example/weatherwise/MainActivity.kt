@@ -7,11 +7,14 @@ import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherwise.Navigation.SetUpNavHost
+import com.example.weatherwise.data.local.WeatherDatabase
+import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl
 /*import com.example.weatherwise.data.local.WeatherDatabase
 import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl*/
 import com.example.weatherwise.data.remote.RetrofitHelper
 import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
 import com.example.weatherwise.data.repo.WeatherRepositoryImpl
+import com.example.weatherwise.favourite.map.MapViewModel
 import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.utils.LocationService
 
@@ -22,6 +25,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val db = WeatherDatabase.getInstance(context = this)
 
 
         locationService = LocationService(this)
@@ -31,10 +35,21 @@ class MainActivity : ComponentActivity() {
                 this,
                 HomeViewModel.HomeFactory(
                     WeatherRepositoryImpl.getInstance(
-                        WeatherRemoteDataSourceImpl(RetrofitHelper.service)
+                        WeatherRemoteDataSourceImpl(RetrofitHelper.service),
+                        WeatherLocalDataSourceImpl(db.weatherDao())
                     )
                 )
             ).get(HomeViewModel::class.java)
+
+           /* val mapViewModel = ViewModelProvider(
+                this,
+                MapViewModel.MapScreenViewModelFactory(
+                    WeatherRepositoryImpl.getInstance(
+                        WeatherRemoteDataSourceImpl(RetrofitHelper.service),
+                        WeatherLocalDataSourceImpl(db.weatherDao())
+                    )
+                )
+            ).get(MapViewModel::class.java)*/
 
             SetUpNavHost(
                 context = this,
@@ -66,7 +81,6 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -81,14 +95,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-
-
 }
-
-
-
-
 
 
 /*class MainActivity : ComponentActivity() {

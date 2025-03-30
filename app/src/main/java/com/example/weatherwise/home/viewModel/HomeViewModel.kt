@@ -10,6 +10,7 @@ import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.data.model.forecastWeather.ForecastWeatherResponse
 import com.example.weatherwise.data.repo.Result
 import com.example.weatherwise.data.repo.WeatherRepository
+import com.example.weatherwise.utils.ApiConstants
 import com.example.weatherwise.utils.DateTimeUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,8 +43,8 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
             newLocation.longitude != lastFetchedLocation?.longitude
         ) {
             lastFetchedLocation = newLocation
-            fetchCurrentWeather(newLocation.latitude, newLocation.longitude, apiKey)
-            fetchWeatherForecast(newLocation.latitude, newLocation.longitude, apiKey)
+            fetchCurrentWeather(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY)
+            fetchWeatherForecast(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY)
         }
     }
 

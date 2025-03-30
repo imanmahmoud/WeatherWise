@@ -22,6 +22,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.ui.theme.LightPurple
+import com.example.weatherwise.ui.theme.LightPurpleO
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -31,7 +32,7 @@ fun HourlyForecastItem(hourlyForecast: CurrentWeatherResponse) {
     Card(
         modifier = Modifier.padding(end = 10.dp, bottom = 12.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = LightPurple)
+        colors = CardDefaults.cardColors(containerColor = LightPurpleO)
     ){
         Column(
             modifier = Modifier.padding(8.dp),
