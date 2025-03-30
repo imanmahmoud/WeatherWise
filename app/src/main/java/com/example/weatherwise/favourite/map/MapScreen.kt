@@ -1,5 +1,6 @@
 package com.example.weatherwise.favourite.map
 
+import android.location.Geocoder
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherwise.BuildConfig
 import com.example.weatherwise.R
-import com.example.weatherwise.WeatherWiseApplication
+//import com.example.weatherwise.WeatherWiseApplication
 import com.example.weatherwise.data.local.WeatherDatabase
 import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl
 
@@ -50,17 +51,17 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import java.util.Locale
 
 @Composable
 fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
 
    // showFAB.value = false
-    val context = LocalContext.current
-
-    val application = context.applicationContext as WeatherWiseApplication
-    val placesClient = application.placesClient
-
+   val context = LocalContext.current
     val db = WeatherDatabase.getInstance(context = context)
+
+   /* val application = context.applicationContext as WeatherWiseApplication
+    val placesClient = application.placesClient
 
     val mapScreenFactory = MapViewModel.MapScreenViewModelFactory(
         placesClient = placesClient,
@@ -69,13 +70,13 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
             WeatherLocalDataSourceImpl(db.weatherDao())
         )
     )
-    val viewModel: MapViewModel = viewModel(factory = mapScreenFactory)
+    val viewModel: MapViewModel = viewModel(factory = mapScreenFactory)*/
 
 
 
 //OLD ONE
     // Initialize Places API (outside ViewModel)
-   /* Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.MAPS_API_KEY )
+    Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.MAPS_API_KEY )
     val placesClient: PlacesClient = Places.createClient(context)
 
     // Create ViewModel with custom factory
@@ -86,7 +87,8 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
            WeatherLocalDataSourceImpl(db.weatherDao())
         )
     )
-    val viewModel: MapViewModel = viewModel(factory = mapScreenFactory)*/
+    val viewModel: MapViewModel = viewModel(factory = mapScreenFactory)
+
 
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val predictions by viewModel.predictions.collectAsStateWithLifecycle()
@@ -137,6 +139,9 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
             )
         }
 
+
+
+
         PlacesAutocompleteTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -160,8 +165,8 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
 
         selectedLocation?.let { location ->
 
-           /* val favouriteLocation = FavouriteLocation(location.latitude,location.longitude)
-            val address = getAddressFromLocation(favouriteLocation)*/
+            val favouriteLocation = FavouriteLocation(location.latitude,location.longitude)
+            val address = getAddressFromLocation(favouriteLocation)
             Card(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -175,7 +180,7 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "address", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.black), fontWeight = FontWeight.Bold)
+                    Text(text = address, style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.black), fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "Latitude: ${location.latitude}")
                     Text(text = "Longitude: ${location.longitude}")
@@ -183,12 +188,12 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
 
                     Button(
                         onClick = { viewModel.insertFavouriteLocation(selectedLocation!!.latitude, selectedLocation!!.longitude) },
-                        colors = ButtonDefaults.buttonColors(PurplePink/*colorResource(R.color.teal_700)*/),
+                        colors = ButtonDefaults.buttonColors(LightPurple/*colorResource(R.color.teal_700)*/),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Add to Favourites",
+                            text = "Select location",
                             style = MaterialTheme.typography.titleMedium,
                             color = colorResource(R.color.white),
                             fontWeight = FontWeight.Bold
@@ -198,6 +203,23 @@ fun MapScreen(/*showFAB: MutableState<Boolean>*/) {
             }
         }
     }
-}
 
-//class FavouriteLocation(latitude: Double, longitude: Double)
+
+}
+@Composable
+fun getAddressFromLocation(location: FavouriteLocation): String {
+    val geocoder = Geocoder(LocalContext.current, Locale.getDefault())
+    return try {
+        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+        if (!addresses.isNullOrEmpty()) {
+            val address = addresses[0]
+            address.adminArea
+        } else {
+            "Address Not Found !"
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "Error Fetching Address"
+    }
+}
+class FavouriteLocation(val latitude: Double, val longitude: Double)

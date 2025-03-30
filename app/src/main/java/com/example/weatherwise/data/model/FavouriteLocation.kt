@@ -14,13 +14,13 @@ data class FavouriteLocation(
     val cityName: String,
     val latitude: Double,
     val longitude: Double,
-    val currentWeatherResponse: CurrentWeatherResponse,
-    val hourlyForecast: List<CurrentWeatherResponse>,
-    val dailyForecast: List<CurrentWeatherResponse>
+   // val currentWeatherResponse: CurrentWeatherResponse,
+  //  val hourlyForecast: List<CurrentWeatherResponse>,
+   // val dailyForecast: List<CurrentWeatherResponse>
 
 )
 
-class Converters {
+/*class Converters {
     private val gson = Gson()
 
     @TypeConverter
@@ -43,4 +43,4 @@ class Converters {
         val type = object : TypeToken<List<CurrentWeatherResponse>>() {}.type
         return gson.fromJson(value, type)
     }
-}
+}*/

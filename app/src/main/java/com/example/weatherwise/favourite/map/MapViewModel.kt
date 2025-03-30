@@ -24,26 +24,26 @@ class MapViewModel(private val placesClient: PlacesClient, private val repositor
 
 
 //Old ONE
-    /*class MapScreenViewModelFactory(private val placesClient: PlacesClient,private val repository: WeatherRepository) : ViewModelProvider.Factory
+    class MapScreenViewModelFactory(private val placesClient: PlacesClient,private val repository: WeatherRepository) : ViewModelProvider.Factory
     {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return MapViewModel(placesClient,repository) as T
         }
-    }*/
+    }
 
 
-    class MapScreenViewModelFactory(
+    /*class MapScreenViewModelFactory(
         private val placesClient: PlacesClient,
         private val repository: WeatherRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
+               @Suppress("UNCHECKED_CAST")
                 return MapViewModel(placesClient, repository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
-    }
+    }*/
 
 
     private val mutableSearchText = MutableStateFlow("")
@@ -73,7 +73,14 @@ class MapViewModel(private val placesClient: PlacesClient, private val repositor
         mutablePredictions.value = emptyList() // Clear predictions
     }
 
+
+
+
+
+
+
     // Fetch autocomplete predictions
+    //old
     private fun fetchPredictions(query: String) {
         if (query.isEmpty()) {
             mutablePredictions.value = emptyList() // Clear predictions when input is empty
