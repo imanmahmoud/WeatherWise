@@ -2,6 +2,7 @@
 package com.example.weatherwise.data.repo
 
 import com.example.weatherwise.data.model.FavouriteLocation
+import com.example.weatherwise.data.model.WeatherData
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.data.model.forecastWeather.ForecastWeatherResponse
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,9 @@ interface WeatherRepository {
     suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>>
     suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation): Long
     suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation): Int
+
+    suspend fun getWeatherData(): Flow<WeatherData>
+    suspend fun insertWeatherData(weatherData: WeatherData):Long
 
    /* suspend fun getAllProducts(isOnline: Boolean): Flow<List<Product>?>
     suspend fun insertProduct(product: Product): Long

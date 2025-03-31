@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weatherwise.data.model.WeatherData
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.data.repo.ResultState
 import com.example.weatherwise.data.repo.WeatherRepository
@@ -34,6 +35,8 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
     val message = _message.asSharedFlow()*/
 
     private var lastFetchedLocation: Location? = null
+    private var lastFetchedWeatherData : WeatherData ? =null
+  //  private lateinit var lastFetchedWeatherData: WeatherData
 
 
     fun fetchWeatherIfLocationChanged(newLocation: Location, isFromFavourite: Boolean) {
@@ -42,34 +45,30 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
             newLocation.longitude != lastFetchedLocation?.longitude
         ) {
             lastFetchedLocation = newLocation
-            fetchCurrentWeather(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY)
-            fetchWeatherForecast(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY)
-            //insert cachedLocation into database
-            if (!isFromFavourite) {
-                viewModelScope.launch {
-                    repo.insertCachedLocation(newLocation)
-                }
-            }
-
+            fetchCurrentWeather(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY,isFromFavourite)
+            fetchWeatherForecast(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY,isFromFavourite)
         }
     }
 
 
-    fun fetchCurrentWeather(lat: Double, lon: Double, apiKey: String) {
+    fun fetchCurrentWeather(lat: Double, lon: Double, apiKey: String, isFromFavourite: Boolean) {
         viewModelScope.launch {
             Log.i("TAG", "fetchWeather: before tryyyyyy")
                 try {
                    // Log.i("TAG", "fetchWeather: after calling repo")
                     repo.getCurrentWeather(lat, lon, apiKey)
                     .catch { e ->
-
                         val errorMessage = when (e) {
                             is UnknownHostException -> "No internet connection. Please check your network."
                             is HttpException -> "Server error: ${e.code()}. Please try again later."
                             else -> "Unexpected error: ${e.localizedMessage}"
                         }
                         Log.i("TAG", "fetchWeather: errorrrrrrrr: $errorMessage")
-                        _currentWeatherState.value = ResultState.Failure(errorMessage)
+                        if (isFromFavourite) {
+                            _currentWeatherState.value = ResultState.Failure(errorMessage)
+                        }else{
+                            getCachedWeatherData()
+                        }
                     }
                     .collect { weatherData ->
                             Log.i("TAG", "fetchWeather: $weatherData")
@@ -82,11 +81,18 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                             _currentWeatherState.value = Response.Failure("Received null weather data")
                         }*/
 
-
                             val formattedDate =
                                 DateTimeHelper.formatUnixTimestampToDate(weatherData/*!!*/.dt.toLong())
                           val currentWeather =  weatherData.copy(formattedDt = formattedDate)
                             _currentWeatherState.value = ResultState.Success(currentWeather)
+                        if (!isFromFavourite) {
+                            lastFetchedWeatherData = WeatherData(
+                                currentWeatherResponse = currentWeather,
+                                hourlyForecast = emptyList(),
+                                dailyForecast = emptyList()
+                            )
+                            //lastFetchedWeatherData.currentWeatherResponse = currentWeather
+                        }
                     }
                 }catch (e:Exception){
                     Log.i("TAG", "fetchWeather: catch errroooor")
@@ -95,7 +101,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
         }
     }
 
-    fun fetchWeatherForecast(lat: Double, lon: Double, apiKey: String) {
+    fun fetchWeatherForecast(lat: Double, lon: Double, apiKey: String, isFromFavourite: Boolean) {
         viewModelScope.launch {
             Log.i("TAG", "fetchWeatherForecast: before try")
             repo.getForecastWeather(lat, lon, apiKey)
@@ -107,8 +113,10 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                         is HttpException -> "Server error: ${e.code()}. Please try again later."
                         else -> "Unexpected error: ${e.localizedMessage}"
                     }
-                    _dailyForecastState.value = ResultState.Failure(errorMessage)
-                    _hourlyForecastState.value = ResultState.Failure(errorMessage)
+                    if(isFromFavourite){
+                        _dailyForecastState.value = ResultState.Failure(errorMessage)
+                        _hourlyForecastState.value = ResultState.Failure(errorMessage)
+                    }
                 }
                 .collect { forecastData ->
                     val hourlyData = forecastData.list
@@ -121,6 +129,8 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                         }
 
                     _hourlyForecastState.value = ResultState.Success(hourlyData)
+
+
                     Log.i("TAG", "fetchWeather: $hourlyData")
 
                     val dailyData = forecastData.list
@@ -132,11 +142,51 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
 
                     _dailyForecastState.value = ResultState.Success(dailyData)
                     Log.i("TAG", "fetchWeather: $dailyData")
+
+                    if (!isFromFavourite) {
+                        lastFetchedWeatherData?.hourlyForecast  = hourlyData
+                        lastFetchedWeatherData?.dailyForecast = hourlyData
+                        insertWeatherData()
+                    }
                 }
         }
     }
 
+    fun insertWeatherData() {
+        viewModelScope.launch{
+            try {
+                Log.i("TAG", "insertWeatherData: before insert")
+                val result = lastFetchedWeatherData?.let {
+                    Log.i("TAG", "insertWeatherData: not null")
+                    repo.insertWeatherData(it) }
+                if (result != null) {
+                    if (result > 0) {
+                        Log.i("TAG", "insertWeatherData: insert weather data success")
+                    } else {
+                        Log.i("TAG", "insertWeatherData: insert weather data failed")
+                    }
+                }
+            } catch (ex: Exception){
+                Log.i("TAG", "insertWeatherData: catch error")
+            }
+        }
+    }
 
+    fun getCachedWeatherData() {
+        viewModelScope.launch {
+            repo.getWeatherData()
+                .catch { e ->
+                    Log.e("TAG", "Error fetching cached weather data: ${e.localizedMessage}")
+                }
+                .collect { weatherData ->
+                    _currentWeatherState.value = ResultState.Success(weatherData.currentWeatherResponse)
+                    _hourlyForecastState.value = ResultState.Success(weatherData.hourlyForecast)
+                    _dailyForecastState.value = ResultState.Success(weatherData.dailyForecast)
+
+                    Log.i("TAG", "fetchCachedWeather: $weatherData")
+                }
+        }
+    }
 
     class HomeFactory(private val repo: WeatherRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

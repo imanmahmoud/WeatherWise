@@ -2,6 +2,7 @@ package com.example.weatherwise.data.repo
 
 import com.example.weatherwise.data.local.LocalDataSource
 import com.example.weatherwise.data.model.FavouriteLocation
+import com.example.weatherwise.data.model.WeatherData
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.data.model.forecastWeather.ForecastWeatherResponse
 import com.example.weatherwise.data.remote.RemoteDataSource
@@ -52,6 +53,14 @@ class WeatherRepositoryImpl private constructor(private val remoteDataSource: Re
 
     override suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation): Int {
         return localDataSource.deleteFavouriteLocation(favouriteLocation)
+    }
+
+    override suspend fun getWeatherData(): Flow<WeatherData> {
+        return localDataSource.getWeatherData()
+    }
+
+    override suspend fun insertWeatherData(weatherData: WeatherData):Long{
+        return localDataSource.insertWeatherData(weatherData)
     }
 
 
