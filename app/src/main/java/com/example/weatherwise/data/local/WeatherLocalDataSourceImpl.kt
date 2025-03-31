@@ -2,6 +2,7 @@ package com.example.weatherwise.data.local
 
 
 import com.example.weatherwise.data.model.FavouriteLocation
+import com.example.weatherwise.data.model.WeatherData
 import kotlinx.coroutines.flow.Flow
 
 class WeatherLocalDataSourceImpl(private val weatherDao: WeatherDao) : LocalDataSource {
@@ -16,6 +17,15 @@ class WeatherLocalDataSourceImpl(private val weatherDao: WeatherDao) : LocalData
 
     override suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation): Int {
         return weatherDao.deleteFavouriteLocation(favouriteLocation)
+    }
+
+    override suspend fun getWeatherData(): Flow<WeatherData> {
+       return weatherDao.getWeatherData()
+    }
+
+    override suspend fun insertWeatherData(weatherData: WeatherData): Long {
+        return weatherDao.insertWeatherData(weatherData)
+
     }
 
 
