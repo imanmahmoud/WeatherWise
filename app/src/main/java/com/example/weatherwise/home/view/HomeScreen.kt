@@ -30,20 +30,58 @@ import kotlinx.coroutines.flow.StateFlow
 //@Preview
 
 
-
-
 @Composable
-fun HomeScreen(viewModel: HomeViewModel, locationState: StateFlow<Location?>) {
+fun HomeScreen(
+    viewModel: HomeViewModel,
+    locationState: StateFlow<Location?>,
+    lat: Double,
+    lon: Double
+) {
     val context = LocalContext.current
 
-    val location by locationState.collectAsStateWithLifecycle()
 
+  /*lateinit  var location: Location
+    val isFromFavourite: Boolean
+
+    if (lat != 0.0 && lon != 0.0) {
+        isFromFavourite = true
+        location.latitude = lat
+        location.longitude = lon
+    } else {
+        val gpsLocation by locationState.collectAsStateWithLifecycle()
+        isFromFavourite = false
+        gpsLocation?.let { location = it }
+        // location = gpsLocation!!
+    }
+
+    LaunchedEffect(location) {
+
+       viewModel.fetchWeatherIfLocationChanged(location, isFromFavourite)
+
+    }*/
+
+    var location: Location?
+    val isFromFavourite: Boolean
+
+    if (lat != 0.0 && lon != 0.0) {
+        isFromFavourite = true
+        location = Location("").apply {
+            latitude = lat
+            longitude = lon
+        }
+    } else {
+        val gpsLocation by locationState.collectAsStateWithLifecycle()
+        isFromFavourite = false
+        location = gpsLocation
+    }
 
     LaunchedEffect(location) {
         location?.let {
-            viewModel.fetchWeatherIfLocationChanged(it)
+            viewModel.fetchWeatherIfLocationChanged(it, isFromFavourite)
         }
     }
+
+
 
     /*LaunchedEffect(location) {
         location?.let {
@@ -72,10 +110,10 @@ fun HomeScreen(viewModel: HomeViewModel, locationState: StateFlow<Location?>) {
             }
         }*/
 
-       /* LaunchedEffect(Unit) {
-            viewModel.fetchCurrentWeather(31.265, 29.989, apiKey)
-            viewModel.fetchWeatherForecast(31.265, 29.989, apiKey)
-        }*/
+        /* LaunchedEffect(Unit) {
+             viewModel.fetchCurrentWeather(31.265, 29.989, apiKey)
+             viewModel.fetchWeatherForecast(31.265, 29.989, apiKey)
+         }*/
 
         val currentWeatherState by viewModel.currentWeatherState.collectAsStateWithLifecycle()
         val hourlyForecastState by viewModel.hourlyForecastState.collectAsStateWithLifecycle()

@@ -6,7 +6,7 @@ sealed class ScreenRoutes {
     @Serializable
     object AlertRoute : ScreenRoutes()
     @Serializable
-    object HomeRoute : ScreenRoutes()
+    data class HomeRoute(val lat: Double=0.0, val lon: Double=0.0) : ScreenRoutes()
     @Serializable
     object FavouriteRoute : ScreenRoutes()
     @Serializable

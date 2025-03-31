@@ -86,15 +86,18 @@ fun SetUpNavHost(
             NavHost(
                 modifier = Modifier.padding(innerPadding),
                 navController = navController,
-                startDestination = ScreenRoutes.HomeRoute
+                startDestination = ScreenRoutes.HomeRoute()
             ){
                 composable<ScreenRoutes.HomeRoute> {
-                    HomeScreen(homeViewModel,locationState)
+                    val lat = it.toRoute<ScreenRoutes.HomeRoute>().lat
+                    val lon = it.toRoute<ScreenRoutes.HomeRoute>().lon
+                    HomeScreen(homeViewModel,locationState,lat,lon)
 
                 }
                 composable<ScreenRoutes.FavouriteRoute> {
 
-                    FavouriteScreen(snackBarHostState=snackBarHostState,viewModel = favouriteViewModel,onNavigateToFavouriteMap = {navController.navigate(ScreenRoutes.MapRoute(isFromFavourite = true))})
+                    FavouriteScreen(snackBarHostState=snackBarHostState,viewModel = favouriteViewModel,onNavigateToFavouriteMap = {navController.navigate(ScreenRoutes.MapRoute(isFromFavourite = true))},
+                        onNavigateToHomeScreen = {lat,lon ->navController.navigate(ScreenRoutes.HomeRoute(lat,lon))})
 
                 }
                 composable<ScreenRoutes.AlertRoute> {

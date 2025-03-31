@@ -5,7 +5,7 @@ import android.icu.util.TimeZone
 import java.util.Date
 import java.util.Locale
 
-object DateTimeUtils {
+object DateTimeHelper {
 
     fun formatUnixTimestampToDate(timestamp: Long): String {
         val sdf = SimpleDateFormat("EEEE, dd MMMM yyyy | hh:mm a", Locale.ENGLISH)

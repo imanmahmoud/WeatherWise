@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeatherDao {
+
     @Query("SELECT * FROM FAVOURITE_LOCATIONS")
             /*suspend*/ fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>>
 
