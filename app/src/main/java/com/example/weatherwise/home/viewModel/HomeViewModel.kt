@@ -10,7 +10,7 @@ import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.data.repo.ResultState
 import com.example.weatherwise.data.repo.WeatherRepository
 import com.example.weatherwise.utils.ApiConstants
-import com.example.weatherwise.utils.DateTimeUtils
+import com.example.weatherwise.utils.DateTimeHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-const val apiKey = "5a46ee8289123314e05b723b9e36d002"
 
 class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
 
@@ -36,7 +35,8 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
 
     private var lastFetchedLocation: Location? = null
 
-    fun fetchWeatherIfLocationChanged(newLocation: Location) {
+
+    fun fetchWeatherIfLocationChanged(newLocation: Location, isFromFavourite: Boolean) {
         if (lastFetchedLocation == null ||
             newLocation.latitude != lastFetchedLocation?.latitude ||
             newLocation.longitude != lastFetchedLocation?.longitude
@@ -44,9 +44,15 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
             lastFetchedLocation = newLocation
             fetchCurrentWeather(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY)
             fetchWeatherForecast(newLocation.latitude, newLocation.longitude, ApiConstants.WEATHER_API_KEY)
+            //insert cachedLocation into database
+            if (!isFromFavourite) {
+                viewModelScope.launch {
+                    repo.insertCachedLocation(newLocation)
+                }
+            }
+
         }
     }
-
 
 
     fun fetchCurrentWeather(lat: Double, lon: Double, apiKey: String) {
@@ -55,7 +61,6 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                 try {
                    // Log.i("TAG", "fetchWeather: after calling repo")
                     repo.getCurrentWeather(lat, lon, apiKey)
-
                     .catch { e ->
 
                         val errorMessage = when (e) {
@@ -65,7 +70,6 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                         }
                         Log.i("TAG", "fetchWeather: errorrrrrrrr: $errorMessage")
                         _currentWeatherState.value = ResultState.Failure(errorMessage)
-                       /*_message.emit(errorMessage)*/
                     }
                     .collect { weatherData ->
                             Log.i("TAG", "fetchWeather: $weatherData")
@@ -80,14 +84,13 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
 
 
                             val formattedDate =
-                                DateTimeUtils.formatUnixTimestampToDate(weatherData/*!!*/.dt.toLong())
+                                DateTimeHelper.formatUnixTimestampToDate(weatherData/*!!*/.dt.toLong())
                           val currentWeather =  weatherData.copy(formattedDt = formattedDate)
                             _currentWeatherState.value = ResultState.Success(currentWeather)
                     }
                 }catch (e:Exception){
                     Log.i("TAG", "fetchWeather: catch errroooor")
                     _currentWeatherState.value = ResultState.Failure("Unexpected error: ${e.localizedMessage}")
-                  /*  _message.emit("Unexpected error: ${e.localizedMessage}")*/
                 }
         }
     }
@@ -111,7 +114,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                     val hourlyData = forecastData.list
                         .take(8)
                         .map { item ->
-                            val formattedHour = DateTimeUtils.formatUnixTimestampToHour(item.dt.toLong())
+                            val formattedHour = DateTimeHelper.formatUnixTimestampToHour(item.dt.toLong())
 
                         val hourlyDataItem = item.copy(formattedDt = formattedHour,name = forecastData.city.name, coord = forecastData.city.coord)
                             hourlyDataItem
@@ -121,7 +124,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                     Log.i("TAG", "fetchWeather: $hourlyData")
 
                     val dailyData = forecastData.list
-                        .groupBy { DateTimeUtils.formatUnixTimestampToDay(it.dt.toLong()) }
+                        .groupBy { DateTimeHelper.formatUnixTimestampToDay(it.dt.toLong()) }
                         .map { (day, items) ->
                             val firstItem = items.first()
                              firstItem.copy(formattedDt = day,name = forecastData.city.name, coord = forecastData.city.coord)

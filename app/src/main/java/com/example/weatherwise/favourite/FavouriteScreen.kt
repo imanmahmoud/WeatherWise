@@ -47,7 +47,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.material.FractionalThreshold
 import androidx.wear.compose.material.SwipeableState
-import androidx.wear.compose.material.rememberSwipeableState
 import androidx.wear.compose.material.swipeable
 import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.repo.ResultState
@@ -58,7 +57,9 @@ import kotlin.math.roundToInt
 fun FavouriteScreen(
     onNavigateToFavouriteMap: () -> Unit,
     viewModel: FavouriteViewModel,
-    snackBarHostState: SnackbarHostState
+    snackBarHostState: SnackbarHostState,
+    onNavigateToHomeScreen: (lat: Double, lon: Double) -> Unit
+
 ) {
     val context = LocalContext.current
 
@@ -112,13 +113,13 @@ fun FavouriteScreen(
                     ) {
                         items(items = locations,key = { it.cityName } ) { location ->
                             SwipeableCard(
-                                title = location.cityName,
+                                location = location,
                                 resetKey = location.hashCode(),
                                 onDelete = {
                                     // Remove the card from the list
                                     viewModel.deleteFavouriteLocation(location)
-                                    // Toast.makeText(LocalContext.current, "${card.first} deleted", Toast.LENGTH_SHORT).show()
-                                }
+                                },
+                                onNavigateToHomeScreen = onNavigateToHomeScreen
                             )
                         }
                     }
@@ -153,9 +154,10 @@ fun FavouriteScreen(
 @OptIn(ExperimentalWearMaterialApi::class)
 @Composable
 fun SwipeableCard(
-    title: String,
     resetKey: Int,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    location: FavouriteLocation,
+    onNavigateToHomeScreen: (lat: Double, lon: Double) -> Unit
 ) {
     //val swipeableState = rememberSwipeableState(initialValue = 0)
 
@@ -207,7 +209,10 @@ fun SwipeableCard(
 
             modifier = Modifier
                 .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable { //take the latitute and longitude and pass it to home screen
+                    onNavigateToHomeScreen(location.latitude, location.longitude)
+                },
             shape = RoundedCornerShape(12.dp), // Same corner radius
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(containerColor = LightPurple) // Purple background for the card
@@ -221,7 +226,7 @@ fun SwipeableCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = title,
+                        text = location.cityName,
                        // style = MaterialTheme.typography.titleMedium,
                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,

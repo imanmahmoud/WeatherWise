@@ -32,7 +32,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         NavigationItem(
             title = "Home",
             icon = Icons.Default.Home,
-            route = ScreenRoutes.HomeRoute
+            route = ScreenRoutes.HomeRoute()
         ),
         NavigationItem(
             title = "Favorite",
