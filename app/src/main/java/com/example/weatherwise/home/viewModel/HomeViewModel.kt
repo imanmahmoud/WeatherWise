@@ -7,8 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
-import com.example.weatherwise.data.model.forecastWeather.ForecastWeatherResponse
-import com.example.weatherwise.data.repo.Result
+import com.example.weatherwise.data.repo.ResultState
 import com.example.weatherwise.data.repo.WeatherRepository
 import com.example.weatherwise.utils.ApiConstants
 import com.example.weatherwise.utils.DateTimeUtils
@@ -23,13 +22,13 @@ const val apiKey = "5a46ee8289123314e05b723b9e36d002"
 
 class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
 
-    private val _currentWeatherState = MutableStateFlow<Result<CurrentWeatherResponse>>(Result.Loading())
+    private val _currentWeatherState = MutableStateFlow<ResultState<CurrentWeatherResponse>>(ResultState.Loading())
     val currentWeatherState = _currentWeatherState.asStateFlow()
 
-    private val _hourlyForecastState = MutableStateFlow<Result<List<CurrentWeatherResponse>>>(Result.Loading())
+    private val _hourlyForecastState = MutableStateFlow<ResultState<List<CurrentWeatherResponse>>>(ResultState.Loading())
     val hourlyForecastState = _hourlyForecastState.asStateFlow()
 
-    private val _dailyForecastState = MutableStateFlow<Result<List<CurrentWeatherResponse>>>(Result.Loading())
+    private val _dailyForecastState = MutableStateFlow<ResultState<List<CurrentWeatherResponse>>>(ResultState.Loading())
     val dailyForecastState = _dailyForecastState.asStateFlow()
 
     /*private val _message = MutableSharedFlow<String>()
@@ -65,7 +64,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                             else -> "Unexpected error: ${e.localizedMessage}"
                         }
                         Log.i("TAG", "fetchWeather: errorrrrrrrr: $errorMessage")
-                        _currentWeatherState.value = Result.Failure(errorMessage)
+                        _currentWeatherState.value = ResultState.Failure(errorMessage)
                        /*_message.emit(errorMessage)*/
                     }
                     .collect { weatherData ->
@@ -83,11 +82,11 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                             val formattedDate =
                                 DateTimeUtils.formatUnixTimestampToDate(weatherData/*!!*/.dt.toLong())
                           val currentWeather =  weatherData.copy(formattedDt = formattedDate)
-                            _currentWeatherState.value = Result.Success(currentWeather)
+                            _currentWeatherState.value = ResultState.Success(currentWeather)
                     }
                 }catch (e:Exception){
                     Log.i("TAG", "fetchWeather: catch errroooor")
-                    _currentWeatherState.value = Result.Failure("Unexpected error: ${e.localizedMessage}")
+                    _currentWeatherState.value = ResultState.Failure("Unexpected error: ${e.localizedMessage}")
                   /*  _message.emit("Unexpected error: ${e.localizedMessage}")*/
                 }
         }
@@ -105,8 +104,8 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                         is HttpException -> "Server error: ${e.code()}. Please try again later."
                         else -> "Unexpected error: ${e.localizedMessage}"
                     }
-                    _dailyForecastState.value = Result.Failure(errorMessage)
-                    _hourlyForecastState.value = Result.Failure(errorMessage)
+                    _dailyForecastState.value = ResultState.Failure(errorMessage)
+                    _hourlyForecastState.value = ResultState.Failure(errorMessage)
                 }
                 .collect { forecastData ->
                     val hourlyData = forecastData.list
@@ -118,7 +117,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                             hourlyDataItem
                         }
 
-                    _hourlyForecastState.value = Result.Success(hourlyData)
+                    _hourlyForecastState.value = ResultState.Success(hourlyData)
                     Log.i("TAG", "fetchWeather: $hourlyData")
 
                     val dailyData = forecastData.list
@@ -128,7 +127,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                              firstItem.copy(formattedDt = day,name = forecastData.city.name, coord = forecastData.city.coord)
                         }
 
-                    _dailyForecastState.value = Result.Success(dailyData)
+                    _dailyForecastState.value = ResultState.Success(dailyData)
                     Log.i("TAG", "fetchWeather: $dailyData")
                 }
         }

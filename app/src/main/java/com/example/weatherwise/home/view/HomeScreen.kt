@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 //import androidx.compose.material.Text
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.weatherwise.data.repo.Result
+import com.example.weatherwise.data.repo.ResultState
 import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.home.view.component.CurrentWeather
 import com.example.weatherwise.home.view.component.DailyForecastCard
@@ -83,9 +82,9 @@ fun HomeScreen(viewModel: HomeViewModel, locationState: StateFlow<Location?>) {
         val dailyForecastState by viewModel.dailyForecastState.collectAsStateWithLifecycle()
 
 
-        val isLoading = currentWeatherState is Result.Loading ||
-                hourlyForecastState is Result.Loading ||
-                dailyForecastState is Result.Loading
+        val isLoading = currentWeatherState is ResultState.Loading ||
+                hourlyForecastState is ResultState.Loading ||
+                dailyForecastState is ResultState.Loading
 
         if (isLoading) {
             /* Box(
@@ -100,9 +99,9 @@ fun HomeScreen(viewModel: HomeViewModel, locationState: StateFlow<Location?>) {
 
 
         val errorMessage = when {
-            currentWeatherState is Result.Failure -> (currentWeatherState as Result.Failure).message
-            hourlyForecastState is Result.Failure -> (hourlyForecastState as Result.Failure).message
-            dailyForecastState is Result.Failure -> (dailyForecastState as Result.Failure).message
+            currentWeatherState is ResultState.Failure -> (currentWeatherState as ResultState.Failure).message
+            hourlyForecastState is ResultState.Failure -> (hourlyForecastState as ResultState.Failure).message
+            dailyForecastState is ResultState.Failure -> (dailyForecastState as ResultState.Failure).message
             else -> null
         }
 
@@ -125,13 +124,13 @@ fun HomeScreen(viewModel: HomeViewModel, locationState: StateFlow<Location?>) {
 
         }
 
-        if (currentWeatherState is Result.Success &&
-            hourlyForecastState is Result.Success &&
-            dailyForecastState is Result.Success
+        if (currentWeatherState is ResultState.Success &&
+            hourlyForecastState is ResultState.Success &&
+            dailyForecastState is ResultState.Success
         ) {
-            val currentWeather = (currentWeatherState as Result.Success).data
-            val hourlyForecast = (hourlyForecastState as Result.Success).data
-            val dailyForecast = (dailyForecastState as Result.Success).data
+            val currentWeather = (currentWeatherState as ResultState.Success).data
+            val hourlyForecast = (hourlyForecastState as ResultState.Success).data
+            val dailyForecast = (dailyForecastState as ResultState.Success).data
 
             CurrentWeather(currentWeather)
 

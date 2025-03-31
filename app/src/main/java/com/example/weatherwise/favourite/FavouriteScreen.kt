@@ -1,10 +1,9 @@
 package com.example.weatherwise.favourite
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,69 +16,123 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddLocation
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.material.FractionalThreshold
+import androidx.wear.compose.material.SwipeableState
 import androidx.wear.compose.material.rememberSwipeableState
 import androidx.wear.compose.material.swipeable
+import com.example.weatherwise.data.model.FavouriteLocation
+import com.example.weatherwise.data.repo.ResultState
 import com.example.weatherwise.ui.theme.LightPurple
-import com.example.weatherwise.ui.theme.LightPurpleO
-import com.example.weatherwise.ui.theme.Purple
 import kotlin.math.roundToInt
 
 @Composable
-fun FavouriteScreen(onNavigateToFavouriteMap: () -> Unit) {
-    var locations by remember { mutableStateOf(listOf("Egypt, New Valley Governorate")) }
-    Box(modifier = Modifier.fillMaxSize()) { // Box allows absolute positioning
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(locations) { card ->
-                SwipeableCard(
-                    title = "Egypt",
+fun FavouriteScreen(
+    onNavigateToFavouriteMap: () -> Unit,
+    viewModel: FavouriteViewModel,
+    snackBarHostState: SnackbarHostState
+) {
+    val context = LocalContext.current
 
-                    onDelete = {
-                        // Remove the card from the list
-                        locations = locations.filter { it != card }
-                        // Toast.makeText(LocalContext.current, "${card.first} deleted", Toast.LENGTH_SHORT).show()
-                    }
+    
+    LaunchedEffect(Unit) {
+        Log.i("TAG", "FavouriteScreen:launchedEffect ")
+        viewModel.getAllFavouriteLocations()
+    }
+
+  val favouriteLocations by  viewModel.favouriteLocations.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.message.collect { message ->
+            // Only show Snackbar for deletion messages
+            if (message.contains("deleted", ignoreCase = true)) {
+                val result = snackBarHostState.showSnackbar(
+                    message = message,
+                    actionLabel = "Undo",
+                    duration = SnackbarDuration.Long
                 )
+                if (result == SnackbarResult.ActionPerformed) {
+                    Log.i("TAG", "FavouriteScreen: snackbar undo action $result")
+
+                   viewModel.restoreFavouriteLocation()
+                }
+            }else{
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) { // Box allows absolute positioning
+
+        when(favouriteLocations){
+            is ResultState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            is ResultState.Success -> {
+                val locations = (favouriteLocations as ResultState.Success).data
+
+                if (locations.isEmpty()) {
+                    Text(text = "You haven't any favourite locations yet",modifier = Modifier.align(Alignment.Center),color = Color.White,
+                        fontSize = 20.sp)
+                }else{
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(vertical = 8.dp)
+                    ) {
+                        items(items = locations,key = { it.cityName } ) { location ->
+                            SwipeableCard(
+                                title = location.cityName,
+                                resetKey = location.hashCode(),
+                                onDelete = {
+                                    // Remove the card from the list
+                                    viewModel.deleteFavouriteLocation(location)
+                                    // Toast.makeText(LocalContext.current, "${card.first} deleted", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                    }
+
+                }
+
+            }
+            is ResultState.Failure -> {
+                Text(text = (favouriteLocations as ResultState.Failure).message,modifier = Modifier.align(Alignment.Center),color = Color.White,
+                    fontSize = 20.sp)
+            }
+
+        }
+
 
         FloatingActionButton(
             containerColor = LightPurple,
@@ -89,7 +142,7 @@ fun FavouriteScreen(onNavigateToFavouriteMap: () -> Unit) {
             onClick = { onNavigateToFavouriteMap() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)  // Aligns FAB to bottom end inside Box
-                .padding(16.dp) // Adds padding to avoid touching screen edges
+               // .padding(16.dp) // Adds padding to avoid touching screen edges
         ) {
             Icon(Icons.Default.AddLocation, contentDescription = "Favourite", Modifier.size(32.dp))
         }
@@ -101,17 +154,25 @@ fun FavouriteScreen(onNavigateToFavouriteMap: () -> Unit) {
 @Composable
 fun SwipeableCard(
     title: String,
+    resetKey: Int,
     onDelete: () -> Unit
 ) {
-    val swipeableState = rememberSwipeableState(initialValue = 0)
+    //val swipeableState = rememberSwipeableState(initialValue = 0)
+
+    val swipeableState = remember(resetKey) {
+        SwipeableState(initialValue = 0)
+    }
+
     val maxSwipe = with(LocalDensity.current) { 100.dp.toPx() } // Swipe distance
     val anchors = mapOf(0f to 0, -maxSwipe to 1) // Swipe states
+
+
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(bottom = 16.dp)
             .swipeable(
                 state = swipeableState,
                 anchors = anchors,

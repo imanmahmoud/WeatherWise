@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.repo.WeatherRepository
 
 import com.google.android.gms.maps.model.LatLng
@@ -16,8 +17,8 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MapViewModel(private val placesClient: PlacesClient, private val repository: WeatherRepository): ViewModel() {
@@ -46,44 +47,39 @@ class MapViewModel(private val placesClient: PlacesClient, private val repositor
     }*/
 
 
-    private val mutableSearchText = MutableStateFlow("")
-    val searchText: StateFlow<String> = mutableSearchText
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
 
-    private val mutablePredictions = MutableStateFlow<List<AutocompletePrediction>>(emptyList())
-    val predictions: StateFlow<List<AutocompletePrediction>> = mutablePredictions
+    private val _predictions = MutableStateFlow<List<AutocompletePrediction>>(emptyList())
+    val predictions= _predictions.asStateFlow()
 
-    private val mutableSelectedLocation = MutableStateFlow<Location?>(null)
-    val selectedLocation: StateFlow<Location?> get() = mutableSelectedLocation
+    private val _selectedLocation = MutableStateFlow<Location?>(null)
+    val selectedLocation = _selectedLocation.asStateFlow()
 
-    private val mutableMessage = MutableSharedFlow<String>()
-    val message = mutableMessage.asSharedFlow()
+    private val _message = MutableSharedFlow<String>()
+    val message = _message.asSharedFlow()
 
     //private val locationBias: LocationBias = RectangularBounds.newInstance(LatLng(39.9, -105.5), // SW lat, lng LatLng(40.1, -105.0)  // NE lat, lng)
 
     // Update search query and fetch predictions
     fun onSearchQueryChanged(query: String) {
-        mutableSearchText.value = query
+        _searchText.value = query
         fetchPredictions(query)
     }
 
     //Fetch place details when a prediction is selected
     fun onPlaceSelected(placeId: String) {
         fetchPlaceDetails(placeId)
-        mutableSearchText.value = "" // Clear search text after selection
-        mutablePredictions.value = emptyList() // Clear predictions
+        _searchText.value = "" // Clear search text after selection
+        _predictions.value = emptyList() // Clear predictions
     }
-
-
-
-
-
 
 
     // Fetch autocomplete predictions
     //old
     private fun fetchPredictions(query: String) {
         if (query.isEmpty()) {
-            mutablePredictions.value = emptyList() // Clear predictions when input is empty
+            _predictions.value = emptyList() // Clear predictions when input is empty
             return
         }
 
@@ -94,7 +90,7 @@ class MapViewModel(private val placesClient: PlacesClient, private val repositor
 
             placesClient.findAutocompletePredictions(request)
                 .addOnSuccessListener { response ->
-                    mutablePredictions.value = response.autocompletePredictions
+                    _predictions.value = response.autocompletePredictions
                 }
                 .addOnFailureListener { exception ->
                     Log.e("MapViewModel", "Error fetching predictions: ${exception.message}")
@@ -109,7 +105,7 @@ class MapViewModel(private val placesClient: PlacesClient, private val repositor
         placesClient.fetchPlace(request)
             .addOnSuccessListener { response ->
                 response.place.latLng?.let { latLng ->
-                    mutableSelectedLocation.value = Location("").apply {
+                    _selectedLocation.value = Location("").apply {
                         latitude = latLng.latitude
                         longitude = latLng.longitude
                     }
@@ -122,20 +118,23 @@ class MapViewModel(private val placesClient: PlacesClient, private val repositor
     }
 
     fun updateSelectedLocation(latLng: LatLng) {
-        mutableSelectedLocation.value = Location("").apply {
+        _selectedLocation.value = Location("").apply {
             latitude = latLng.latitude
             longitude = latLng.longitude
         }
     }
 
-    fun insertFavouriteLocation(lat: Double, lon: Double) {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun insertFavouriteLocation(favouriteLocation: FavouriteLocation) {
+        viewModelScope.launch{
             try {
-                /*  val favouriteLocation = FavouriteLocation(latitude = lat, longitude = lon)
-                  repository.insertFavouriteLocation(favouriteLocation)*/
-                mutableMessage.emit("Location Added Successfully!")
+                val result = repository.insertFavouriteLocation(favouriteLocation)
+                if (result > 0) {
+                    _message.emit("Location Added Successfully!")
+                } else {
+                    _message.emit("Location is already in Favourites")
+                }
             } catch (ex: Exception){
-                mutableMessage.emit("Couldn't Add Location To Favourites ${ex.message}")
+                _message.emit("Couldn't Add Location To Favourites ${ex.message}")
             }
         }
     }
