@@ -9,21 +9,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.weatherwise.R
 import com.example.weatherwise.alert.AlertScreen
 import com.example.weatherwise.favourite.FavouriteScreen
+import com.example.weatherwise.favourite.FavouriteViewModel
 import com.example.weatherwise.favourite.map.MapScreen
 import com.example.weatherwise.home.view.HomeScreen
 import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.settings.SettingsScreen
+import com.example.weatherwise.ui.theme.LightPurple
 import com.example.weatherwise.ui.theme.Purple
 import com.example.weatherwise.ui.theme.PurpleBlue
 import com.example.weatherwise.ui.theme.PurplePink
@@ -33,12 +41,21 @@ import kotlinx.coroutines.flow.StateFlow
 fun SetUpNavHost(
     context: Context,
     homeViewModel: HomeViewModel,
-    locationState: StateFlow<Location?>
+    locationState: StateFlow<Location?>,
+    favouriteViewModel: FavouriteViewModel
 ){
     var navController = rememberNavController()
-
+    val snackBarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        snackbarHost = {SnackbarHost(snackBarHostState, snackbar = { snackbarData ->
+            Snackbar(
+                snackbarData = snackbarData,
+                containerColor = Color.White, // Change background color here
+                contentColor = Color.Black ,
+                actionColor = LightPurple // Change text/icon color here
+            )
+        })},
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) { innerPadding ->
@@ -77,7 +94,7 @@ fun SetUpNavHost(
                 }
                 composable<ScreenRoutes.FavouriteRoute> {
 
-                    FavouriteScreen(onNavigateToFavouriteMap = {navController.navigate(ScreenRoutes.MapRoute)})
+                    FavouriteScreen(snackBarHostState=snackBarHostState,viewModel = favouriteViewModel,onNavigateToFavouriteMap = {navController.navigate(ScreenRoutes.MapRoute(isFromFavourite = true))})
 
                 }
                 composable<ScreenRoutes.AlertRoute> {
@@ -87,7 +104,8 @@ fun SetUpNavHost(
                     SettingsScreen()
                 }
                 composable<ScreenRoutes.MapRoute> {
-                    MapScreen()
+                    val isFromFavourite = it.toRoute<ScreenRoutes.MapRoute>().isFromFavourite
+                    MapScreen(isFromFavourite)
                 }
 
             }

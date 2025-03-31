@@ -14,7 +14,7 @@ import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl*/
 import com.example.weatherwise.data.remote.RetrofitHelper
 import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
 import com.example.weatherwise.data.repo.WeatherRepositoryImpl
-import com.example.weatherwise.favourite.map.MapViewModel
+import com.example.weatherwise.favourite.FavouriteViewModel
 import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.utils.LocationService
 
@@ -41,19 +41,20 @@ class MainActivity : ComponentActivity() {
                 )
             ).get(HomeViewModel::class.java)
 
-           /* val mapViewModel = ViewModelProvider(
+            val favouriteViewModel = ViewModelProvider(
                 this,
-                MapViewModel.MapScreenViewModelFactory(
+                FavouriteViewModel.FavouriteProductsFactory(
                     WeatherRepositoryImpl.getInstance(
                         WeatherRemoteDataSourceImpl(RetrofitHelper.service),
                         WeatherLocalDataSourceImpl(db.weatherDao())
                     )
                 )
-            ).get(MapViewModel::class.java)*/
+            ).get(FavouriteViewModel::class.java)
 
             SetUpNavHost(
                 context = this,
                 homeViewModel = homeViewModel,
+                favouriteViewModel = favouriteViewModel,
                 locationState = locationService.currentLocation
             )
         }

@@ -12,7 +12,7 @@ sealed class ScreenRoutes {
     @Serializable
     object SettingsRoute : ScreenRoutes()
     @Serializable
-    object MapRoute : ScreenRoutes()
+    data class MapRoute(val isFromFavourite: Boolean) : ScreenRoutes()
 
 }
 
