@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.weatherwise.R
 import com.example.weatherwise.ui.theme.LightPurple
 import com.example.weatherwise.ui.theme.PurpleBlue
 import com.example.weatherwise.ui.theme.PurplePink
@@ -30,22 +32,22 @@ fun BottomNavigationBar(navController: NavHostController) {
 
     val navigationItems = listOf(
         NavigationItem(
-            title = "Home",
+            title = stringResource(R.string.home),
             icon = Icons.Default.Home,
             route = ScreenRoutes.HomeRoute()
         ),
         NavigationItem(
-            title = "Favorite",
+            title = stringResource(R.string.favorite),
             icon = Icons.Default.Favorite,
             route = ScreenRoutes.FavouriteRoute
         ),
         NavigationItem(
-            title = "Alert",
+            title = stringResource(R.string.alert),
             icon = Icons.Default.NotificationsActive,
             route = ScreenRoutes.AlertRoute
         ),
         NavigationItem(
-            title = "Settings",
+            title = stringResource(R.string.settings),
             icon = Icons.Default.Settings,
             route = ScreenRoutes.SettingsRoute
         )

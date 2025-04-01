@@ -4,8 +4,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,10 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddLocation
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -50,7 +49,9 @@ import androidx.wear.compose.material.SwipeableState
 import androidx.wear.compose.material.swipeable
 import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.repo.ResultState
+import com.example.weatherwise.favourite.viewModel.FavouriteViewModel
 import com.example.weatherwise.ui.theme.LightPurple
+import com.example.weatherwise.ui.theme.LightPurpleO
 import kotlin.math.roundToInt
 
 @Composable
@@ -128,8 +129,20 @@ fun FavouriteScreen(
 
             }
             is ResultState.Failure -> {
-                Text(text = (favouriteLocations as ResultState.Failure).message,modifier = Modifier.align(Alignment.Center),color = Color.White,
-                    fontSize = 20.sp)
+
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    , modifier = Modifier.align(Alignment.Center)) {
+                    Icon(
+                        imageVector = Icons.Default.ErrorOutline,
+                        contentDescription = "User Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(text = (favouriteLocations as ResultState.Failure).message,color = Color.White,
+                        fontSize = 20.sp)
+                }
+
             }
 
         }
@@ -165,15 +178,18 @@ fun SwipeableCard(
         SwipeableState(initialValue = 0)
     }
 
-    val maxSwipe = with(LocalDensity.current) { 100.dp.toPx() } // Swipe distance
+    val maxSwipe = with(LocalDensity.current) { 400.dp.toPx() } // Swipe distance
     val anchors = mapOf(0f to 0, -maxSwipe to 1) // Swipe states
 
+    if (swipeableState.currentValue == 1) {
+        onDelete()
+    }
 
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(100.dp)
             .padding(bottom = 16.dp)
             .swipeable(
                 state = swipeableState,
@@ -183,10 +199,10 @@ fun SwipeableCard(
             )
     ) {
         // Background delete button with matching rounded corners
-        Card(
+       /* Card(
             modifier = Modifier.fillMaxSize(),
             shape = RoundedCornerShape(12.dp), // Same corner shape as the foreground card
-            colors = CardDefaults.cardColors(containerColor = Color.Red) // Set the background color to red
+            colors = CardDefaults.cardColors(containerColor = Color.White) // Set the background color to red
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -194,7 +210,7 @@ fun SwipeableCard(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete Location",
-                    tint = Color.White,
+                    tint = Color.Red,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = 24.dp)
@@ -202,7 +218,7 @@ fun SwipeableCard(
                         .size(32.dp) // Size of the icon
                 )
             }
-        }
+        }*/
 
         // Foreground content (Card)
         Card(
@@ -210,21 +226,24 @@ fun SwipeableCard(
             modifier = Modifier
                 .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
                 .fillMaxSize()
+               // .border(1.dp, Color.White, RoundedCornerShape(12.dp))
                 .clickable { //take the latitute and longitude and pass it to home screen
                     onNavigateToHomeScreen(location.latitude, location.longitude)
                 },
-            shape = RoundedCornerShape(12.dp), // Same corner radius
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(containerColor = LightPurple) // Purple background for the card
+           // shape = RoundedCornerShape(12.dp), // Same corner radius
+           // elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(containerColor = LightPurpleO) // Purple background for the card
         ) {
 
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(/*vertical = 20.dp,*/ horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+               // Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = location.cityName,
                        // style = MaterialTheme.typography.titleMedium,
@@ -232,7 +251,7 @@ fun SwipeableCard(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
-                }
+              //  }
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowRight,
                     contentDescription = "Details",

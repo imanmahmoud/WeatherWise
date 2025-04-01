@@ -19,16 +19,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
-import com.example.weatherwise.ui.theme.LightPurple
 import com.example.weatherwise.ui.theme.LightPurpleO
 import com.example.weatherwise.utils.WeatherIconHelper
+import com.example.weatherwise.utils.formatNumberBasedOnLanguage
 
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DailyForecastItem(dailyForecast: CurrentWeatherResponse) {
+fun DailyForecastItem(dailyForecast: CurrentWeatherResponse, tempUnit: String) {
     val iconUrl = "https://openweathermap.org/img/wn/${dailyForecast.weather[0].icon}@2x.png"
     val image = WeatherIconHelper.getWeatherIcon(dailyForecast.weather[0].main)
 
@@ -63,22 +62,14 @@ fun DailyForecastItem(dailyForecast: CurrentWeatherResponse) {
             modifier = Modifier.weight(1f)
         )
 
-        Text("${dailyForecast.main.temp_max.toInt()}°c / ", fontSize = 14.sp, color = Color.White)
-        Text("${dailyForecast.main.temp_min.toInt()}°c", fontSize = 14.sp, color = Color.White)
+        Text("${formatNumberBasedOnLanguage(dailyForecast.main.temp_max.toInt().toString()) }${tempUnit} / ", fontSize = 14.sp, color = Color.White)
+        Text("${formatNumberBasedOnLanguage(dailyForecast.main.temp_min.toInt().toString())} ${tempUnit }", fontSize = 14.sp, color = Color.White)
     }
 }
 
 @Composable
-fun DailyForecastCard(dailyForecastList: List<CurrentWeatherResponse>) {
+fun DailyForecastCard(dailyForecastList: List<CurrentWeatherResponse>, tempUnit: String) {
 
-   /* val dailyForecastList = listOf(
-        DailyForecastItemData("Monday", R.drawable.atmosphere_weather, "Sunny", "+31°", "+51°"),
-        DailyForecastItemData("Tuesday", R.drawable.cloudy_weather, "Cloudy", "+31°", "+51°"),
-        DailyForecastItemData("Wednesday", R.drawable.snow_weather, "Thunder", "+31°", "+51°"),
-        DailyForecastItemData("Thursday", R.drawable.thunder_weather, "Thunder", "+31°", "+51°"),
-        DailyForecastItemData("Friday", R.drawable.rain_weather, "Rain", "+31°", "+51°"),
-        DailyForecastItemData("Saturday", R.drawable.sunny_weather, "Rain", "+31°", "+51°")
-    )*/
 
     Card(
         modifier = Modifier
@@ -90,7 +81,7 @@ fun DailyForecastCard(dailyForecastList: List<CurrentWeatherResponse>) {
         Column(modifier = Modifier.padding(16.dp)) {
             Column {
                 dailyForecastList.forEach { forecast ->
-                    DailyForecastItem(forecast)
+                    DailyForecastItem(forecast, tempUnit)
                 }
             }
         }

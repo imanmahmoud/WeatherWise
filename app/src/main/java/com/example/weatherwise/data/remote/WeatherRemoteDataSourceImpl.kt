@@ -19,7 +19,7 @@ class WeatherRemoteDataSourceImpl(private val weatherApiService: WeatherApiServi
       //  try {
 
 
-            val response = weatherApiService.getCurrentWeather(latitude, longitude, apiKey)
+            val response = weatherApiService.getCurrentWeather(latitude, longitude, apiKey, units, language)
             if (response.isSuccessful) {
                 Log.i("TAG", "getCurrentWeather: suscceesssssssss repo")
                 response.body()?.let { weatherData ->
@@ -46,7 +46,7 @@ class WeatherRemoteDataSourceImpl(private val weatherApiService: WeatherApiServi
         units: String,
         language: String
     ): Flow<ForecastWeatherResponse> = flow {
-        val response = weatherApiService.getForecastWeather(latitude, longitude, apiKey)
+        val response = weatherApiService.getForecastWeather(latitude, longitude, apiKey, units, language)
         if (response.isSuccessful) {
             response.body()?.let { forecastData ->
                   emit(forecastData)

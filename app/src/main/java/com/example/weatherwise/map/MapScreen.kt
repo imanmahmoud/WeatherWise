@@ -1,4 +1,4 @@
-package com.example.weatherwise.favourite.map
+package com.example.weatherwise.map
 
 import android.location.Geocoder
 import android.widget.Toast
