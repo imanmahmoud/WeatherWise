@@ -26,11 +26,12 @@ import androidx.navigation.toRoute
 import com.example.weatherwise.R
 import com.example.weatherwise.alert.AlertScreen
 import com.example.weatherwise.favourite.FavouriteScreen
-import com.example.weatherwise.favourite.FavouriteViewModel
-import com.example.weatherwise.favourite.map.MapScreen
+import com.example.weatherwise.favourite.viewModel.FavouriteViewModel
+import com.example.weatherwise.map.MapScreen
 import com.example.weatherwise.home.view.HomeScreen
 import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.settings.SettingsScreen
+import com.example.weatherwise.settings.SettingsViewModel
 import com.example.weatherwise.ui.theme.LightPurple
 import com.example.weatherwise.ui.theme.Purple
 import com.example.weatherwise.ui.theme.PurpleBlue
@@ -42,7 +43,8 @@ fun SetUpNavHost(
     context: Context,
     homeViewModel: HomeViewModel,
     locationState: StateFlow<Location?>,
-    favouriteViewModel: FavouriteViewModel
+    favouriteViewModel: FavouriteViewModel,
+    settingsViewModel: SettingsViewModel
 ){
     var navController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -104,7 +106,7 @@ fun SetUpNavHost(
                     AlertScreen()
                 }
                 composable<ScreenRoutes.SettingsRoute> {
-                    SettingsScreen()
+                    SettingsScreen(settingsViewModel = settingsViewModel)
                 }
                 composable<ScreenRoutes.MapRoute> {
                     val isFromFavourite = it.toRoute<ScreenRoutes.MapRoute>().isFromFavourite

@@ -8,14 +8,14 @@ import java.util.Locale
 object DateTimeHelper {
 
     fun formatUnixTimestampToDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("EEEE, dd MMMM yyyy | hh:mm a", Locale.ENGLISH)
+        val sdf = SimpleDateFormat("EEEE, dd MMMM yyyy | hh:mm a", Locale.getDefault())
         sdf.timeZone = TimeZone.getDefault()
         return sdf.format(Date(timestamp * 1000))
     }
 
     fun formatUnixTimestampToHour(dt: Long): String {
         val date = Date(dt * 1000) // Convert seconds to milliseconds
-        val format = SimpleDateFormat("h a", Locale.ENGLISH) // "h" for hour, "a" for AM/PM
+        val format = SimpleDateFormat("h a", Locale.getDefault()) // "h" for hour, "a" for AM/PM
         return format.format(date).lowercase() // Convert "PM" -> "pm"
     }
 

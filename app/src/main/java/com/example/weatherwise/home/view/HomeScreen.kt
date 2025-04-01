@@ -1,5 +1,6 @@
 package com.example.weatherwise.home.view
 
+import android.content.Context
 import android.location.Location
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -18,13 +19,18 @@ import androidx.compose.ui.unit.sp
 
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 //import androidx.compose.material.Text
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.weatherwise.R
 import com.example.weatherwise.data.repo.ResultState
+import com.example.weatherwise.data.sharedPreference.PreferenceHelper
 import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.home.view.component.CurrentWeather
 import com.example.weatherwise.home.view.component.DailyForecastCard
 import com.example.weatherwise.home.view.component.HourlyForecastList
+import com.example.weatherwise.utils.getTempUnitDisplay
+import com.example.weatherwise.utils.getWindSpeedUnitDisplay
 import kotlinx.coroutines.flow.StateFlow
 
 //@Preview
@@ -38,27 +44,34 @@ fun HomeScreen(
     lon: Double
 ) {
     val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+    val unit = sharedPreferences.getString(PreferenceHelper.TEMP_UNIT_KEY, "metric") ?: "metric"
+    val language = sharedPreferences.getString(PreferenceHelper.LANGUAGE_KEY, "en") ?: "en"
+
+    val tempUnit = getTempUnitDisplay(unit)
+    val windSpeedUnit = getWindSpeedUnitDisplay(unit)
 
 
-  /*lateinit  var location: Location
-    val isFromFavourite: Boolean
 
-    if (lat != 0.0 && lon != 0.0) {
-        isFromFavourite = true
-        location.latitude = lat
-        location.longitude = lon
-    } else {
-        val gpsLocation by locationState.collectAsStateWithLifecycle()
-        isFromFavourite = false
-        gpsLocation?.let { location = it }
-        // location = gpsLocation!!
-    }
+    /*lateinit  var location: Location
+      val isFromFavourite: Boolean
 
-    LaunchedEffect(location) {
+      if (lat != 0.0 && lon != 0.0) {
+          isFromFavourite = true
+          location.latitude = lat
+          location.longitude = lon
+      } else {
+          val gpsLocation by locationState.collectAsStateWithLifecycle()
+          isFromFavourite = false
+          gpsLocation?.let { location = it }
+          // location = gpsLocation!!
+      }
 
-       viewModel.fetchWeatherIfLocationChanged(location, isFromFavourite)
+      LaunchedEffect(location) {
 
-    }*/
+         viewModel.fetchWeatherIfLocationChanged(location, isFromFavourite)
+
+      }*/
 
     var location: Location?
     val isFromFavourite: Boolean
@@ -77,7 +90,7 @@ fun HomeScreen(
 
     LaunchedEffect(location) {
         location?.let {
-            viewModel.fetchWeatherIfLocationChanged(it, isFromFavourite)
+            viewModel.fetchWeatherIfLocationChanged(it, isFromFavourite,unit,language)
         }
     }
 
@@ -171,12 +184,12 @@ fun HomeScreen(
             val hourlyForecast = (hourlyForecastState as ResultState.Success).data
             val dailyForecast = (dailyForecastState as ResultState.Success).data
 
-            CurrentWeather(currentWeather)
+            CurrentWeather(currentWeather, tempUnit, windSpeedUnit)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                "Today",
+                stringResource(R.string.today),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -185,12 +198,12 @@ fun HomeScreen(
                     .padding(bottom = 10.dp)
             )
 
-            HourlyForecastList(hourlyForecast)
+            HourlyForecastList(hourlyForecast, tempUnit)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                "5-Day Forecast",
+                stringResource(R.string.daily_forecast),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -199,7 +212,7 @@ fun HomeScreen(
                     .padding(bottom = 10.dp)
             )
 
-            DailyForecastCard(dailyForecast)
+            DailyForecastCard(dailyForecast, tempUnit)
         }
     }
 }

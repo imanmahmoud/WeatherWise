@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ويذر وايز</string>
+
+    <string name="language">اللغة</string>
+    <string name="location">الموقع</string>
+    <string name="temp_unit">وحدة الحرارة</string>
+    <string name="wind_speed_unit">وحدة سرعة الرياح</string>
+
+    <string name="arabic">العربية</string>
+    <string name="english">الإنجليزية</string>
+    <string name="default_lang">الافتراضية</string>
+
+    <string name="gps">نظام تحديد المواقع</string>
+    <string name="map">الخريطة</string>
+
+    <string name="celsius">°س</string>
+    <string name="kelvin">°ك</string>
+    <string name="fahrenheit">°ف</string>
+
+    <string name="meter_sec">متر/ثانية</string>
+    <string name="miles_hour">ميل/ساعة</string>
+    <string name="today">اليوم</string>
+    <string name="daily_forecast">التوقعات اليومية</string>
+    <string name="clouds">الغيوم</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="pressure">الضغط</string>
+
+    <string name="home">الرئيسية</string>
+    <string name="favorite">المفضلة</string>
+    <string name="alert">التنبيهات</string>
+    <string name="settings">الإعدادات</string>
+    <string name="hpa">%1$s ه ب ا</string>
+    <string name="feels_like">يشعر و كأنه %1$s%2$s</string>
+</resources>

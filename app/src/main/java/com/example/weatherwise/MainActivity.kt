@@ -1,7 +1,11 @@
 package com.example.weatherwise
 
+import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
@@ -14,9 +18,12 @@ import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl*/
 import com.example.weatherwise.data.remote.RetrofitHelper
 import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
 import com.example.weatherwise.data.repo.WeatherRepositoryImpl
-import com.example.weatherwise.favourite.FavouriteViewModel
+import com.example.weatherwise.data.sharedPreference.PreferenceHelper
+import com.example.weatherwise.favourite.viewModel.FavouriteViewModel
 import com.example.weatherwise.home.viewModel.HomeViewModel
+import com.example.weatherwise.settings.SettingsViewModel
 import com.example.weatherwise.utils.LocationService
+import java.util.Locale
 
 const val REQUEST_LOCATION_CODE = 2005
 
@@ -26,6 +33,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val db = WeatherDatabase.getInstance(context = this)
+        val preferenceHelper = PreferenceHelper(context = this)
+      //  val language = preferenceHelper.getLanguage()
+       // LocaleHelper.setLocale(this, language)
+
+        applySavedLanguage(this,preferenceHelper)
+
 
 
         locationService = LocationService(this)
@@ -51,14 +64,41 @@ class MainActivity : ComponentActivity() {
                 )
             ).get(FavouriteViewModel::class.java)
 
+            val settingsViewModel = ViewModelProvider(
+                this,
+                SettingsViewModel.SettingsFactory(preferenceHelper)
+            ).get(SettingsViewModel::class.java)
+
             SetUpNavHost(
                 context = this,
                 homeViewModel = homeViewModel,
                 favouriteViewModel = favouriteViewModel,
+                settingsViewModel = settingsViewModel,
                 locationState = locationService.currentLocation
             )
         }
+
+
+
     }
+
+    fun applySavedLanguage(context: Context, preferenceHelper: PreferenceHelper) {
+//
+        val language = preferenceHelper.getLanguage()
+        Log.i("tag", "applySavedLanguage:$language ")
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration(resources.configuration)
+        config.setLocale(locale)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            context.createConfigurationContext(config)
+            resources.updateConfiguration(config, resources.displayMetrics)
+        } else {
+            resources.updateConfiguration(config, resources.displayMetrics)
+        }
+    }
+
+
 
     override fun onStart() {
         super.onStart()

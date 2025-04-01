@@ -30,7 +30,7 @@ class WeatherRepositoryImpl private constructor(private val remoteDataSource: Re
         units: String,
         language: String
     ): Flow<CurrentWeatherResponse/*?*/> {
-        return remoteDataSource.getCurrentWeather(latitude, longitude, apiKey)
+        return remoteDataSource.getCurrentWeather(latitude, longitude, apiKey, units, language)
     }
 
     override suspend fun getForecastWeather(
@@ -40,7 +40,7 @@ class WeatherRepositoryImpl private constructor(private val remoteDataSource: Re
         units: String,
         language: String
     ): Flow<ForecastWeatherResponse> {
-        return remoteDataSource.getForecastWeather(latitude, longitude, apiKey)
+        return remoteDataSource.getForecastWeather(latitude, longitude, apiKey, units, language)
     }
 
     override suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>> {

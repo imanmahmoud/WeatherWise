@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
-import com.example.weatherwise.ui.theme.LightPurple
 import com.example.weatherwise.ui.theme.LightPurpleO
+import com.example.weatherwise.utils.formatNumberBasedOnLanguage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun HourlyForecastItem(hourlyForecast: CurrentWeatherResponse) {
+fun HourlyForecastItem(hourlyForecast: CurrentWeatherResponse, tempUnit: String) {
     val iconUrl = "https://openweathermap.org/img/wn/${hourlyForecast.weather[0].icon}@2x.png"
 
     Card(
@@ -44,7 +44,6 @@ fun HourlyForecastItem(hourlyForecast: CurrentWeatherResponse) {
             Text(hourlyForecast.formattedDt, fontSize = 14.sp, color = Color.White)
 
 
-
             // Load the image using Glide
             GlideImage(
                 model = iconUrl, contentDescription = "Weather Icon", modifier = Modifier.size(50.dp)
@@ -55,31 +54,19 @@ fun HourlyForecastItem(hourlyForecast: CurrentWeatherResponse) {
                 modifier = Modifier.size(50.dp)
             )*/
 
-            Text("${hourlyForecast.main.temp.toInt()}°c", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Text("${formatNumberBasedOnLanguage(hourlyForecast.main.temp.toInt().toString()) }${tempUnit}", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
         }
     }
 
 }
 
 @Composable
-fun HourlyForecastList(hourlyForecastList: List<CurrentWeatherResponse>) {
+fun HourlyForecastList(hourlyForecastList: List<CurrentWeatherResponse>, tempUnit: String) {
     LazyRow(modifier = Modifier.fillMaxWidth()) {
         items(hourlyForecastList) { forecast ->
-            HourlyForecastItem(forecast)
+            HourlyForecastItem(forecast, tempUnit)
         }
     }
 }
 
-/*
-// Sample Data
-data class HourlyForecast(val time: String, val temperature: String, val icon: Int)
 
-fun getTodayForecast(): List<HourlyForecast> {
-    return listOf(
-        HourlyForecast("10 AM", "23°", R.drawable.rainy_weather),
-        HourlyForecast("12 PM", "23°", R.drawable.ic_launcher_foreground),
-        HourlyForecast("1 PM", "23°", R.drawable.ic_launcher_foreground),
-        HourlyForecast("3 PM", "23°", R.drawable.ic_launcher_foreground),
-        HourlyForecast("5 PM", "23°", R.drawable.ic_launcher_foreground)
-    )
-}*/

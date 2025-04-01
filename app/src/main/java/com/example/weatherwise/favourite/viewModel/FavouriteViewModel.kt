@@ -1,4 +1,4 @@
-package com.example.weatherwise.favourite
+package com.example.weatherwise.favourite.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
