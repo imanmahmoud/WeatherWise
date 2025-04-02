@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.weatherwise.R
-import com.example.weatherwise.alert.AlertScreen
+import com.example.weatherwise.alert.view.AlertScreen
 import com.example.weatherwise.favourite.FavouriteScreen
 import com.example.weatherwise.favourite.viewModel.FavouriteViewModel
 import com.example.weatherwise.map.MapScreen

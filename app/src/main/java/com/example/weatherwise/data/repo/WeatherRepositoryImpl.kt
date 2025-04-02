@@ -6,6 +6,7 @@ import com.example.weatherwise.data.model.WeatherData
 import com.example.weatherwise.data.model.currentWeather.CurrentWeatherResponse
 import com.example.weatherwise.data.model.forecastWeather.ForecastWeatherResponse
 import com.example.weatherwise.data.remote.RemoteDataSource
+import com.example.weatherwizard.alert.model.AlertModel
 import kotlinx.coroutines.flow.Flow
 
 class WeatherRepositoryImpl private constructor(private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) :
@@ -61,6 +62,18 @@ class WeatherRepositoryImpl private constructor(private val remoteDataSource: Re
 
     override suspend fun insertWeatherData(weatherData: WeatherData):Long{
         return localDataSource.insertWeatherData(weatherData)
+    }
+
+    override suspend fun insertAlert(alert: AlertModel) {
+        localDataSource.insertAlert(alert)
+    }
+
+    override suspend fun deleteAlert(alert: AlertModel) {
+        localDataSource.deleteAlert(alert)
+    }
+
+    override suspend fun getAllAlerts(): Flow<List<AlertModel>> {
+        return localDataSource.getAllAlerts()
     }
 
 

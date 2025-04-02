@@ -39,9 +39,8 @@ class MainActivity : ComponentActivity() {
 
         applySavedLanguage(this,preferenceHelper)
 
-
-
         locationService = LocationService(this)
+
 
         setContent {
             val homeViewModel = ViewModelProvider(

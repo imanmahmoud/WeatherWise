@@ -72,6 +72,7 @@ fun FavouriteScreen(
 
   val favouriteLocations by  viewModel.favouriteLocations.collectAsStateWithLifecycle()
 
+
     LaunchedEffect(Unit) {
         viewModel.message.collect { message ->
             // Only show Snackbar for deletion messages
@@ -155,10 +156,10 @@ fun FavouriteScreen(
             // elevation = FloatingActionButtonDefaults.elevation(8.dp),
             onClick = { onNavigateToFavouriteMap() },
             modifier = Modifier
-                .align(Alignment.BottomEnd)  // Aligns FAB to bottom end inside Box
-               // .padding(16.dp) // Adds padding to avoid touching screen edges
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
         ) {
-            Icon(Icons.Default.AddLocation, contentDescription = "Favourite", Modifier.size(32.dp))
+            Icon(Icons.Default.AddLocation, contentDescription = "Favourite",/* Modifier.size(32.dp)*/)
         }
     }
 }
@@ -276,71 +277,3 @@ fun SwipeableCard(
 }
 
 
-/*@OptIn(ExperimentalWearMaterialApi::class)
-@Composable
-fun SwipeableCard(
-    //modifier: Modifier = Modifier,
-    title: String,
-   // subtitle: String,
-    onDelete: () -> Unit
-) {
-    val swipeableState = rememberSwipeableState(initialValue = 0)
-    val maxSwipe = with(LocalDensity.current) { 200.dp.toPx() } // Swipe distance
-    val anchors = mapOf(0f to 0, -maxSwipe to 1) // Swipe states
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .swipeable(
-                state = swipeableState,
-                anchors = anchors,
-                thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                orientation = Orientation.Horizontal
-
-            )
-    ) {
-        // Background delete button
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Red)
-                .border(1.dp, Color.Red, RoundedCornerShape(12.dp))
-                .align(Alignment.CenterEnd)
-        ) {
-            Icon(
-                //modifier = Modifier.padding(end = 24.dp),
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Delete Location",
-                tint = Color.White,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 24.dp)
-                    .clickable { onDelete() } // Trigger the delete action
-                    .size(32.dp) // Size of the delete icon
-            )
-        }
-
-        // Foreground content (Card)
-        Card(
-            modifier = Modifier
-                .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
-                .fillMaxSize(),
-            shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(containerColor = LightPurple)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-               // Text(text = subtitle, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
-            }
-        }
-    }
-}*/

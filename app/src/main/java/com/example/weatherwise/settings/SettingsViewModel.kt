@@ -46,6 +46,7 @@ class SettingsViewModel(private val preferenceHelper: PreferenceHelper) : ViewMo
     }
 
 
+
     class SettingsFactory(private val preferenceHelper: PreferenceHelper) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

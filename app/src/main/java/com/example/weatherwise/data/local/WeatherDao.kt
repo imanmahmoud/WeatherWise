@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.model.WeatherData
+import com.example.weatherwizard.alert.model.AlertModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -27,6 +28,15 @@ interface WeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeatherData(weatherData: WeatherData): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAlert(alert: AlertModel)
+
+    @Delete
+    suspend fun deleteAlert(alert: AlertModel)
+
+    @Query("SELECT * FROM alerts ORDER BY date, time")
+    fun getAllAlerts(): Flow<List<AlertModel>>
 
 
 

@@ -50,12 +50,12 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
         unit: String,
         language: String
     ) {
-        if (lastFetchedLocation == null ||
+      /*  if (lastFetchedLocation == null ||
             newLocation.latitude != lastFetchedLocation?.latitude ||
             newLocation.longitude != lastFetchedLocation?.longitude  ||
             lastUnit != unit ||
             lastLanguage != language
-        ) {
+        ) {*/
             lastFetchedLocation = newLocation
             lastUnit = unit
             lastLanguage = language
@@ -86,7 +86,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
 
                 insertWeatherData()
             }*/
-        }
+        //}
     }
 
 
