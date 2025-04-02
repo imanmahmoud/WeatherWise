@@ -29,8 +29,11 @@ import com.example.weatherwise.home.viewModel.HomeViewModel
 import com.example.weatherwise.home.view.component.CurrentWeather
 import com.example.weatherwise.home.view.component.DailyForecastCard
 import com.example.weatherwise.home.view.component.HourlyForecastList
+import com.example.weatherwise.utils.ApiConstants
 import com.example.weatherwise.utils.getTempUnitDisplay
 import com.example.weatherwise.utils.getWindSpeedUnitDisplay
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.StateFlow
 
 //@Preview
@@ -47,10 +50,12 @@ fun HomeScreen(
     val sharedPreferences = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
     val unit = sharedPreferences.getString(PreferenceHelper.TEMP_UNIT_KEY, "metric") ?: "metric"
     val language = sharedPreferences.getString(PreferenceHelper.LANGUAGE_KEY, "en") ?: "en"
+    val locationOption = sharedPreferences.getString(PreferenceHelper.LOCATION_KEY, "GPS") ?: "GPS"
+    val mapLatitude = sharedPreferences.getFloat(PreferenceHelper.MAP_LATITUDE_KEY, 0f)
+    val mapLongitude = sharedPreferences.getFloat(PreferenceHelper.MAP_LONGITUDE_KEY, 0f)
 
     val tempUnit = getTempUnitDisplay(unit)
     val windSpeedUnit = getWindSpeedUnitDisplay(unit)
-
 
 
     /*lateinit  var location: Location
@@ -83,17 +88,25 @@ fun HomeScreen(
             longitude = lon
         }
     } else {
-        val gpsLocation by locationState.collectAsStateWithLifecycle()
         isFromFavourite = false
-        location = gpsLocation
+        if (locationOption == "Map") {
+            location = Location("").apply {
+                latitude = mapLatitude.toDouble()
+                longitude = mapLongitude.toDouble()
+            }
+        } else {
+            val gpsLocation by locationState.collectAsStateWithLifecycle()
+            location = gpsLocation
+
+        }
+
     }
 
     LaunchedEffect(location) {
         location?.let {
-            viewModel.fetchWeatherIfLocationChanged(it, isFromFavourite,unit,language)
+            viewModel.fetchWeatherIfLocationChanged(it, isFromFavourite, unit, language)
         }
     }
-
 
 
     /*LaunchedEffect(location) {
@@ -104,18 +117,33 @@ fun HomeScreen(
     }*/
 
 
+    val currentWeatherState by viewModel.currentWeatherState.collectAsStateWithLifecycle()
+    val hourlyForecastState by viewModel.hourlyForecastState.collectAsStateWithLifecycle()
+    val dailyForecastState by viewModel.dailyForecastState.collectAsStateWithLifecycle()
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 18.dp, end = 18.dp, top = 18.dp)
-            .verticalScroll(rememberScrollState()),
-    ) {
+    val isLoading = currentWeatherState is ResultState.Loading ||
+            hourlyForecastState is ResultState.Loading ||
+            dailyForecastState is ResultState.Loading
+
+    //val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
+
+  /*  SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = { location?.let { viewModel.fetchCurrentWeather(it.latitude, it.longitude,ApiConstants.WEATHER_API_KEY, isFromFavourite, unit, language)
+            viewModel.fetchWeatherForecast(it.latitude, it.longitude,ApiConstants.WEATHER_API_KEY, isFromFavourite, unit, language) } }
+    ) {*/
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 18.dp, end = 18.dp, top = 18.dp)
+                .verticalScroll(rememberScrollState()),
+        ) {
 
 
-        /*val location by locationState.collectAsStateWithLifecycle()
+            /*val location by locationState.collectAsStateWithLifecycle()
 
         LaunchedEffect(location) {
             location?.let {
@@ -124,96 +152,93 @@ fun HomeScreen(
             }
         }*/
 
-        /* LaunchedEffect(Unit) {
+            /* LaunchedEffect(Unit) {
              viewModel.fetchCurrentWeather(31.265, 29.989, apiKey)
              viewModel.fetchWeatherForecast(31.265, 29.989, apiKey)
          }*/
 
-        val currentWeatherState by viewModel.currentWeatherState.collectAsStateWithLifecycle()
-        val hourlyForecastState by viewModel.hourlyForecastState.collectAsStateWithLifecycle()
-        val dailyForecastState by viewModel.dailyForecastState.collectAsStateWithLifecycle()
 
-
-        val isLoading = currentWeatherState is ResultState.Loading ||
+            /*  val isLoading = currentWeatherState is ResultState.Loading ||
                 hourlyForecastState is ResultState.Loading ||
-                dailyForecastState is ResultState.Loading
+                dailyForecastState is ResultState.Loading*/
 
-        if (isLoading) {
-            /* Box(
+            if (isLoading) {
+                /* Box(
                  modifier = Modifier
                      .wrapContentSize(Alignment.Center)
                      *//*.background(Color.Gray)
                     .padding(8.dp)*//*
             ) {*/
-            CircularProgressIndicator(color = Color.White)
-            // }
-        }
-
-
-        val errorMessage = when {
-            currentWeatherState is ResultState.Failure -> (currentWeatherState as ResultState.Failure).message
-            hourlyForecastState is ResultState.Failure -> (hourlyForecastState as ResultState.Failure).message
-            dailyForecastState is ResultState.Failure -> (dailyForecastState as ResultState.Failure).message
-            else -> null
-        }
-
-        if (errorMessage != null) {
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(
-                    imageVector = Icons.Default.ErrorOutline,
-                    contentDescription = "User Icon",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = errorMessage,
-                    color = Color.White,
-                    fontSize = 18.sp
-                )
+                CircularProgressIndicator(color = Color.White)
+                // }
             }
 
 
-        }
+            val errorMessage = when {
+                currentWeatherState is ResultState.Failure -> (currentWeatherState as ResultState.Failure).message
+                hourlyForecastState is ResultState.Failure -> (hourlyForecastState as ResultState.Failure).message
+                dailyForecastState is ResultState.Failure -> (dailyForecastState as ResultState.Failure).message
+                else -> null
+            }
 
-        if (currentWeatherState is ResultState.Success &&
-            hourlyForecastState is ResultState.Success &&
-            dailyForecastState is ResultState.Success
-        ) {
-            val currentWeather = (currentWeatherState as ResultState.Success).data
-            val hourlyForecast = (hourlyForecastState as ResultState.Success).data
-            val dailyForecast = (dailyForecastState as ResultState.Success).data
+            if (errorMessage != null) {
 
-            CurrentWeather(currentWeather, tempUnit, windSpeedUnit)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.ErrorOutline,
+                        contentDescription = "User Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = errorMessage,
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                stringResource(R.string.today),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(bottom = 10.dp)
-            )
+            }
 
-            HourlyForecastList(hourlyForecast, tempUnit)
+            if (currentWeatherState is ResultState.Success &&
+                hourlyForecastState is ResultState.Success &&
+                dailyForecastState is ResultState.Success
+            ) {
+                val currentWeather = (currentWeatherState as ResultState.Success).data
+                val hourlyForecast = (hourlyForecastState as ResultState.Success).data
+                val dailyForecast = (dailyForecastState as ResultState.Success).data
 
-            Spacer(modifier = Modifier.height(16.dp))
+                CurrentWeather(currentWeather, tempUnit, windSpeedUnit)
 
-            Text(
-                stringResource(R.string.daily_forecast),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(bottom = 10.dp)
-            )
+                Spacer(modifier = Modifier.height(16.dp))
 
-            DailyForecastCard(dailyForecast, tempUnit)
-        }
+                Text(
+                    stringResource(R.string.today),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(bottom = 10.dp)
+                )
+
+                HourlyForecastList(hourlyForecast, tempUnit)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    stringResource(R.string.daily_forecast),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(bottom = 10.dp)
+                )
+
+                DailyForecastCard(dailyForecast, tempUnit)
+            }
+       // }
     }
 }
 
