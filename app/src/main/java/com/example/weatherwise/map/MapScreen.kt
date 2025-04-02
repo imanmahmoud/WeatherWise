@@ -203,7 +203,7 @@ fun MapScreen(isFromFavourite: Boolean) {
                                 favouriteLocation
                             ) else {
                                 //save location to shared preferences
-                             preferenceHelper.saveMapLocation(location.latitude, location.longitude)
+                             preferenceHelper.saveMapGPSLocation(location.latitude, location.longitude)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(LightPurple),

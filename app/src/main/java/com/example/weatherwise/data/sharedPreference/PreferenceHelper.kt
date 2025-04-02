@@ -17,12 +17,12 @@ class PreferenceHelper(context: Context) {
         const val MAP_LONGITUDE_KEY = "mapLongitude"
     }
 
-    fun saveMapLocation(latitude: Double, longitude: Double) {
+    fun saveMapGPSLocation(latitude: Double, longitude: Double) {
         sharedPreferences.edit().putFloat(MAP_LATITUDE_KEY, latitude.toFloat()).apply()
         sharedPreferences.edit().putFloat(MAP_LONGITUDE_KEY, longitude.toFloat()).apply()
         sharedPreferences.edit().commit()
     }
-    fun getMapLocation(): Pair<Float, Float> {
+    fun getMapGPSLocation(): Pair<Float, Float> {
         val latitude = sharedPreferences.getFloat(MAP_LATITUDE_KEY, 0f)
         val longitude = sharedPreferences.getFloat(MAP_LONGITUDE_KEY, 0f)
         return Pair(latitude, longitude)
@@ -51,7 +51,7 @@ class PreferenceHelper(context: Context) {
     }*/
 
     fun getLanguage(): String {
-        val storedLanguage = sharedPreferences.getString(LANGUAGE_KEY, "") ?: ""
+        val storedLanguage = sharedPreferences.getString(LANGUAGE_KEY, "en") ?: "en"
         return if (storedLanguage.isEmpty()) Locale.getDefault().language else storedLanguage
     }
 

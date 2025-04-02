@@ -11,9 +11,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 //import com.example.weatherwise.data.model.Converters
 import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.model.WeatherData
+import com.example.weatherwizard.alert.model.AlertModel
 
 
-@Database(entities = [ FavouriteLocation::class , WeatherData::class ], version = 2/*, exportSchema = false*/)
+@Database(entities = [ FavouriteLocation::class , WeatherData::class , AlertModel::class], version = 3/*, exportSchema = false*/)
 @TypeConverters(WeatherDataConverters::class)
 abstract class WeatherDatabase: RoomDatabase() {
 

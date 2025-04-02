@@ -3,6 +3,7 @@ package com.example.weatherwise.data.local
 
 import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.model.WeatherData
+import com.example.weatherwizard.alert.model.AlertModel
 import kotlinx.coroutines.flow.Flow
 
 class WeatherLocalDataSourceImpl(private val weatherDao: WeatherDao) : LocalDataSource {
@@ -26,6 +27,18 @@ class WeatherLocalDataSourceImpl(private val weatherDao: WeatherDao) : LocalData
     override suspend fun insertWeatherData(weatherData: WeatherData): Long {
         return weatherDao.insertWeatherData(weatherData)
 
+    }
+
+    override suspend fun insertAlert(alert: AlertModel) {
+        weatherDao.insertAlert(alert)
+    }
+
+    override suspend fun deleteAlert(alert: AlertModel) {
+        weatherDao.deleteAlert(alert)
+    }
+
+    override suspend fun getAllAlerts(): Flow<List<AlertModel>> {
+        return weatherDao.getAllAlerts()
     }
 
 
