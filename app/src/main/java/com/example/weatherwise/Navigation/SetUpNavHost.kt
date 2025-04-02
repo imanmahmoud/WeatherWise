@@ -106,7 +106,7 @@ fun SetUpNavHost(
                     AlertScreen()
                 }
                 composable<ScreenRoutes.SettingsRoute> {
-                    SettingsScreen(settingsViewModel = settingsViewModel)
+                    SettingsScreen(settingsViewModel = settingsViewModel,onNavigateToMap = {navController.navigate(ScreenRoutes.MapRoute(isFromFavourite = false))})
                 }
                 composable<ScreenRoutes.MapRoute> {
                     val isFromFavourite = it.toRoute<ScreenRoutes.MapRoute>().isFromFavourite

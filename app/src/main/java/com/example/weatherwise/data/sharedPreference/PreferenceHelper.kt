@@ -13,8 +13,20 @@ class PreferenceHelper(context: Context) {
       //  const val WIND_SPEED_UNIT_KEY = "wind_speed_unit"
         const val LANGUAGE_KEY = "language"
         const val LOCATION_KEY = "location"
+        const val MAP_LATITUDE_KEY = "mapLatitude"
+        const val MAP_LONGITUDE_KEY = "mapLongitude"
     }
 
+    fun saveMapLocation(latitude: Double, longitude: Double) {
+        sharedPreferences.edit().putFloat(MAP_LATITUDE_KEY, latitude.toFloat()).apply()
+        sharedPreferences.edit().putFloat(MAP_LONGITUDE_KEY, longitude.toFloat()).apply()
+        sharedPreferences.edit().commit()
+    }
+    fun getMapLocation(): Pair<Float, Float> {
+        val latitude = sharedPreferences.getFloat(MAP_LATITUDE_KEY, 0f)
+        val longitude = sharedPreferences.getFloat(MAP_LONGITUDE_KEY, 0f)
+        return Pair(latitude, longitude)
+    }
     fun saveTempUnit(tempUnit: String) {
         sharedPreferences.edit().putString(TEMP_UNIT_KEY, tempUnit).apply()
         sharedPreferences.edit().commit()
@@ -49,6 +61,6 @@ class PreferenceHelper(context: Context) {
     }
 
     fun getLocation(): String {
-        return sharedPreferences.getString(LOCATION_KEY, "Map") ?: "Map"
+        return sharedPreferences.getString(LOCATION_KEY, "GPS") ?: "GPS"
     }
 }

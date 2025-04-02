@@ -57,6 +57,9 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
             lastLanguage != language
         ) {
             lastFetchedLocation = newLocation
+            lastUnit = unit
+            lastLanguage = language
+
             fetchCurrentWeather(
                lat =  newLocation.latitude,
                 lon = newLocation.longitude,

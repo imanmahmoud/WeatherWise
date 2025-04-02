@@ -112,6 +112,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("androidx.compose.material:material:1.7.8")
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.31.1-alpha")
+
 
 
 

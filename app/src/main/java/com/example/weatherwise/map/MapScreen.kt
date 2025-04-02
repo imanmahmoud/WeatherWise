@@ -37,6 +37,7 @@ import com.example.weatherwise.data.model.FavouriteLocation
 import com.example.weatherwise.data.remote.RetrofitHelper
 import com.example.weatherwise.data.remote.WeatherRemoteDataSourceImpl
 import com.example.weatherwise.data.repo.WeatherRepositoryImpl
+import com.example.weatherwise.data.sharedPreference.PreferenceHelper
 import com.example.weatherwise.ui.theme.LightPurple
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -59,6 +60,7 @@ fun MapScreen(isFromFavourite: Boolean) {
     // showFAB.value = false
     val context = LocalContext.current
     val db = WeatherDatabase.getInstance(context = context)
+    val preferenceHelper = PreferenceHelper(context = context)
 
     /* val application = context.applicationContext as WeatherWiseApplication
      val placesClient = application.placesClient
@@ -199,7 +201,10 @@ fun MapScreen(isFromFavourite: Boolean) {
                         onClick = {
                             if (isFromFavourite) viewModel.insertFavouriteLocation(
                                 favouriteLocation
-                            ) else viewModel.insertFavouriteLocation(favouriteLocation)
+                            ) else {
+                                //save location to shared preferences
+                             preferenceHelper.saveMapLocation(location.latitude, location.longitude)
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(LightPurple),
                         shape = RoundedCornerShape(8.dp),

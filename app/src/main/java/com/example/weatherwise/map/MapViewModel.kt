@@ -139,4 +139,6 @@ class MapViewModel(private val placesClient: PlacesClient, private val repositor
         }
     }
 
+
+
 }
