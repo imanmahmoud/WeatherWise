@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherwise.Navigation.SetUpNavHost
+import com.example.weatherwise.alert.MyWorker
 import com.example.weatherwise.data.local.WeatherDatabase
 import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl
 /*import com.example.weatherwise.data.local.WeatherDatabase
@@ -32,6 +33,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (intent.getBooleanExtra("STOP_ALARM", false)) {
+            MyWorker.mediaPlayer?.stop()
+            MyWorker.mediaPlayer?.release()
+            MyWorker.mediaPlayer = null
+        }
+
         val db = WeatherDatabase.getInstance(context = this)
         val preferenceHelper = PreferenceHelper(context = this)
       //  val language = preferenceHelper.getLanguage()

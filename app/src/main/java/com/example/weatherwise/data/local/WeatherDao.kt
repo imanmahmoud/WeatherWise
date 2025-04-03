@@ -23,8 +23,12 @@ interface WeatherDao {
     suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation): Int
 
 
-    @Query("SELECT * FROM weather_data WHERE id = 1")
-    fun getWeatherData(): Flow<WeatherData>
+    /*@Query("SELECT * FROM weather_data WHERE id = 1")
+    fun getWeatherData(): Flow<WeatherData>*/
+
+    @Query("SELECT * FROM weather_data WHERE latitude = :lat AND longitude = :lon")
+    fun getWeatherData(lat: Double, lon: Double): Flow<WeatherData>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeatherData(weatherData: WeatherData): Long

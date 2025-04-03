@@ -14,7 +14,7 @@ import com.example.weatherwise.data.model.WeatherData
 import com.example.weatherwizard.alert.model.AlertModel
 
 
-@Database(entities = [ FavouriteLocation::class , WeatherData::class , AlertModel::class], version = 3/*, exportSchema = false*/)
+@Database(entities = [ FavouriteLocation::class , WeatherData::class , AlertModel::class], version = 4/*, exportSchema = false*/)
 @TypeConverters(WeatherDataConverters::class)
 abstract class WeatherDatabase: RoomDatabase() {
 

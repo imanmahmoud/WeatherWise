@@ -17,8 +17,6 @@ class WeatherRemoteDataSourceImpl(private val weatherApiService: WeatherApiServi
        Log.i("TAG", "getCurrentWeather: before ifffffffff repo")
 
       //  try {
-
-
             val response = weatherApiService.getCurrentWeather(latitude, longitude, apiKey, units, language)
             if (response.isSuccessful) {
                 Log.i("TAG", "getCurrentWeather: suscceesssssssss repo")

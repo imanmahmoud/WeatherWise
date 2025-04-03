@@ -63,7 +63,8 @@ import androidx.wear.compose.material.SwipeableState
 import androidx.wear.compose.material.swipeable
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.weatherwise.MyWorker
+import com.example.weatherwise.R
+import com.example.weatherwise.alert.MyWorker
 import com.example.weatherwise.data.local.WeatherDatabase
 import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl
 import com.example.weatherwise.data.remote.RetrofitHelper
@@ -77,6 +78,7 @@ import com.example.weatherwizard.alert.model.AlertModel
 import com.example.weatherwise.alert.viewModel.AlertViewModel
 import com.example.weatherwise.ui.theme.LightPurple
 import com.example.weatherwise.ui.theme.LightPurpleO
+import com.example.weatherwise.utils.LottieWithControls
 /*import com.example.weatherwizard.data.database.AppDb
 import com.example.weatherwizard.data.database.LocalDataSource*/
 import java.util.Calendar
@@ -120,22 +122,31 @@ fun AlertScreen() {
     val alerts = viewModel.alerts.collectAsStateWithLifecycle()
 
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(items = alerts.value,key = { it.hashCode() } ) { alert ->
-                AlertCard(
-                   alert=alert,
-                    resetKey = alert.hashCode(),
-                    action = { viewModel.deleteAlert(it) },
-                )
+        if(alerts.value.isEmpty()){
+            LottieWithControls()
+
+       }else{
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(items = alerts.value, key = { it.hashCode() }) { alert ->
+                    AlertCard(
+                        alert = alert,
+                        resetKey = alert.hashCode(),
+                        action = { viewModel.deleteAlert(it) },
+                    )
+                }
             }
         }
+
+
 
         FloatingActionButton(
             containerColor = LightPurple,
@@ -149,7 +160,7 @@ fun AlertScreen() {
                 imageVector = Icons.Default.NotificationAdd,
                 contentDescription = "Open Bottom Sheet",
 
-            )
+                )
         }
 
         if (showBottomSheet.value) {
@@ -175,7 +186,7 @@ fun BottomSheetContent(showBottomSheet: MutableState<Boolean>, viewModel: AlertV
     var selectedDate = remember { mutableStateOf("Alert Date") } // Store selected date
     val verified = remember { mutableStateOf(true) }
     val datePickerDialog = DatePickerDialog(
-        context,
+        context,R.style.CustomDatePickerDialog,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
             selectedDate.value =
                 "$selectedDay/${selectedMonth + 1}/$selectedYear" // Format selected date
@@ -194,7 +205,7 @@ fun BottomSheetContent(showBottomSheet: MutableState<Boolean>, viewModel: AlertV
     var selectedTime = remember { mutableStateOf("Alert Time") } // Store selected time
 
     val timePickerDialog = TimePickerDialog(
-        context,
+        context, R.style.CustomTimePickerDialog,
         { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
             selectedTime.value =
                 String.format("%02d:%02d", selectedHour, selectedMinute) // Format time as HH:mm
@@ -213,23 +224,41 @@ fun BottomSheetContent(showBottomSheet: MutableState<Boolean>, viewModel: AlertV
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
+
         ) {
-            Text("Date", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Button(
-                onClick = { datePickerDialog.show() }, colors = ButtonDefaults.buttonColors(
-                    Color.White
-                ), modifier = Modifier.padding(vertical = 16.dp), shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(selectedDate.value, color = MaterialTheme.colorScheme.primary)
+
+            Row (horizontalArrangement = Arrangement.spacedBy(50.dp)){
+                Text("Date", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 16.dp))
+               /* Button(
+                    onClick = { datePickerDialog.show() },
+                    colors = ButtonDefaults.buttonColors(
+                        Color.Transparent
+                    ),
+                    //  modifier = Modifier.padding(vertical = 16.dp),
+                   // shape = RoundedCornerShape(8.dp)
+                ) {*/
+                    Text(selectedDate.value, fontSize = 16.sp, color = MaterialTheme.colorScheme.primary,modifier = Modifier.padding(bottom = 16.dp).clickable { datePickerDialog.show() })
+              //  }
             }
-            Text("Time", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Button(
-                onClick = { timePickerDialog.show() }, colors = ButtonDefaults.buttonColors(
-                    Color.White
-                ), modifier = Modifier.padding(vertical = 16.dp), shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(selectedTime.value, color = MaterialTheme.colorScheme.primary)
+
+
+
+            Row(horizontalArrangement = Arrangement.spacedBy(50.dp), modifier = Modifier.padding(bottom = 16.dp)) {
+                Text("Time", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+               /* Button(
+                    onClick = { timePickerDialog.show() },
+                    colors = ButtonDefaults.buttonColors(
+                        Color.Transparent
+                    ),
+                   // modifier = Modifier.padding(vertical = 16.dp),
+                   // shape = RoundedCornerShape(8.dp)
+                ) {*/
+                    Text(selectedTime.value, fontSize = 16.sp, color = MaterialTheme.colorScheme.primary,modifier = Modifier.padding(bottom = 16.dp).clickable { timePickerDialog.show() })
+               // }
             }
+
+
+
             if (verified.value == false) {
                 Text("Incorrect time", color = Color.Red, fontSize = 12.sp)
             }
@@ -237,7 +266,7 @@ fun BottomSheetContent(showBottomSheet: MutableState<Boolean>, viewModel: AlertV
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp), horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(horizontal = 32.dp), horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Button(
                     onClick = {
@@ -263,7 +292,7 @@ fun BottomSheetContent(showBottomSheet: MutableState<Boolean>, viewModel: AlertV
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        MaterialTheme.colorScheme.primary
+                        LightPurple
                     ), shape = RoundedCornerShape(8.dp)
                 ) {
                     Text("Save", fontSize = 18.sp)
@@ -271,7 +300,7 @@ fun BottomSheetContent(showBottomSheet: MutableState<Boolean>, viewModel: AlertV
                 Button(
                     onClick = { showBottomSheet.value = false },
                     colors = ButtonDefaults.buttonColors(
-                        MaterialTheme.colorScheme.primary
+                        LightPurple
                     ), shape = RoundedCornerShape(8.dp)
                 ) {
                     Text("Cancel", fontSize = 18.sp)
@@ -293,7 +322,7 @@ fun AlertCard(alert: AlertModel, action: (AlertModel) -> Unit, resetKey: Int) {
     val anchors = mapOf(0f to 0, -maxSwipe to 1) // Swipe states
 
     if (swipeableState.currentValue == 1) {
-       action.invoke(alert)
+        action.invoke(alert)
     }
 
     Box(
@@ -308,76 +337,76 @@ fun AlertCard(alert: AlertModel, action: (AlertModel) -> Unit, resetKey: Int) {
                 orientation = Orientation.Horizontal
             )
     ) {
-    Card(
+        Card(
 
-        modifier = Modifier
-            .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
-            .fillMaxSize(),
+            modifier = Modifier
+                .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+                .fillMaxSize(),
             // .border(1.dp, Color.White, RoundedCornerShape(12.dp))
 
-        // shape = RoundedCornerShape(12.dp), // Same corner radius
-        // elevation = CardDefaults.cardElevation(8.dp),
-        colors = CardDefaults.cardColors(containerColor = LightPurpleO) // Purple background for the card
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(/*vertical = 20.dp,*/ horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            // shape = RoundedCornerShape(12.dp), // Same corner radius
+            // elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(containerColor = LightPurpleO) // Purple background for the card
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(/*vertical = 20.dp,*/ horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Date : ${alert.date}", color = Color.White, fontSize = 18.sp,
+
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Text(
+                        text = "Time : ${alert.time}", color = Color.White, fontSize = 18.sp,
+
+                        // modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Favorite",
+                    tint = Color.White, modifier = Modifier.padding(top = 8.dp)
+                )
+
+
+                /*  Row(Modifier.padding(top = 8.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Favorite",
+                    tint = Color.White, modifier = Modifier.padding(top = 8.dp)
+                )
                 Text(
                     text = "Date : ${alert.date}", color = Color.White, fontSize = 18.sp,
 
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
                 )
                 Text(
                     text = "Time : ${alert.time}", color = Color.White, fontSize = 18.sp,
 
-                   // modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = "Favorite",
-                tint = Color.White, modifier = Modifier.padding(top = 8.dp)
-            )
-
-
-            /*  Row(Modifier.padding(top = 8.dp)) {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = "Favorite",
-                tint = Color.White, modifier = Modifier.padding(top = 8.dp)
-            )
-            Text(
-                text = "Date : ${alert.date}", color = Color.White, fontSize = 18.sp,
-
-                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
-            )
-            Text(
-                text = "Time : ${alert.time}", color = Color.White, fontSize = 18.sp,
-
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
 
 
 
-        Button(
-            onClick = { action.invoke(alert) },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-            modifier = Modifier.padding(bottom = 8.dp, end = 8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Favorite",
-                tint = Color.White, modifier = Modifier.padding(top = 0.dp)
-            )
+            Button(
+                onClick = { action.invoke(alert) },
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                modifier = Modifier.padding(bottom = 8.dp, end = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Favorite",
+                    tint = Color.White, modifier = Modifier.padding(top = 0.dp)
+                )
 
-        }*/
+            }*/
+            }
         }
     }
-        }
 }

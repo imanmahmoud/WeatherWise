@@ -13,33 +13,6 @@ data class FavouriteLocation(
     val cityName: String,
     val latitude: Double,
     val longitude: Double,
-   // val currentWeatherResponse: CurrentWeatherResponse,
-  //  val hourlyForecast: List<CurrentWeatherResponse>,
-   // val dailyForecast: List<CurrentWeatherResponse>
-
 )
 
-/*class Converters {
-    private val gson = Gson()
 
-    @TypeConverter
-    fun fromCurrentWeatherResponse(value: CurrentWeatherResponse): String {
-        return gson.toJson(value)
-    }
-
-    @TypeConverter
-    fun toCurrentWeatherResponse(value: String): CurrentWeatherResponse {
-        return gson.fromJson(value, CurrentWeatherResponse::class.java)
-    }
-
-    @TypeConverter
-    fun fromCurrentWeatherResponseList(value: List<CurrentWeatherResponse>): String {
-        return gson.toJson(value)
-    }
-
-    @TypeConverter
-    fun toCurrentWeatherResponseList(value: String): List<CurrentWeatherResponse> {
-        val type = object : TypeToken<List<CurrentWeatherResponse>>() {}.type
-        return gson.fromJson(value, type)
-    }
-}*/
