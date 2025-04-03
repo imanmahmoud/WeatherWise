@@ -113,6 +113,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("androidx.compose.material:material:1.7.8")
+
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.31.1-alpha")
 
 
@@ -164,6 +165,10 @@ dependencies {
 
     //Turbine Testing For Flow
     testImplementation ("app.cash.turbine:turbine:0.12.1")
+
+
+       // implementation("com.airbnb.android:lottie-compose:6.3.0") // Use the latest version
+
 
 
 

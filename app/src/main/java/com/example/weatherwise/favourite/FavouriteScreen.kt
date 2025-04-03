@@ -52,6 +52,7 @@ import com.example.weatherwise.data.repo.ResultState
 import com.example.weatherwise.favourite.viewModel.FavouriteViewModel
 import com.example.weatherwise.ui.theme.LightPurple
 import com.example.weatherwise.ui.theme.LightPurpleO
+import com.example.weatherwise.utils.LottieWithControls
 import kotlin.math.roundToInt
 
 @Composable
@@ -71,7 +72,6 @@ fun FavouriteScreen(
     }
 
   val favouriteLocations by  viewModel.favouriteLocations.collectAsStateWithLifecycle()
-
 
     LaunchedEffect(Unit) {
         viewModel.message.collect { message ->
@@ -94,6 +94,7 @@ fun FavouriteScreen(
     }
 
 
+
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) { // Box allows absolute positioning
@@ -106,8 +107,9 @@ fun FavouriteScreen(
                 val locations = (favouriteLocations as ResultState.Success).data
 
                 if (locations.isEmpty()) {
-                    Text(text = "You haven't any favourite locations yet",modifier = Modifier.align(Alignment.Center),color = Color.White,
-                        fontSize = 20.sp)
+                    LottieWithControls()
+                   /* Text(text = "You haven't any favourite locations yet",modifier = Modifier.align(Alignment.Center),color = Color.White,
+                        fontSize = 20.sp)*/
                 }else{
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),

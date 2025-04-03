@@ -20,6 +20,7 @@ class NotificationDismissReceiver : BroadcastReceiver() {
 
 
 
+/*
 class NotificationNavigateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
@@ -37,4 +38,4 @@ class NotificationNavigateReceiver : BroadcastReceiver() {
     }
 
 
-}
+}*/

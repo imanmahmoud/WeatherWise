@@ -49,20 +49,16 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val preferenceHelper = PreferenceHelper(context = context)
-   // val sharedPreferences = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-    val unit =preferenceHelper.getTempUnit() //sharedPreferences.getString(PreferenceHelper.TEMP_UNIT_KEY, "metric") ?: "metric"
-    val language =preferenceHelper.getLanguage() //sharedPreferences.getString(PreferenceHelper.LANGUAGE_KEY, "en") ?: "en"
-    val locationOption =preferenceHelper.getLocation() //sharedPreferences.getString(PreferenceHelper.LOCATION_KEY, "GPS") ?: "GPS"
-    val pair = preferenceHelper.getMapGPSLocation()
 
-   // val mapLatitude = sharedPreferences.getFloat(PreferenceHelper.MAP_LATITUDE_KEY, 0f)
-   // val mapLongitude = sharedPreferences.getFloat(PreferenceHelper.MAP_LONGITUDE_KEY, 0f)
+    val unit = preferenceHelper.getTempUnit()
+    val language = preferenceHelper.getLanguage()
+    val locationOption = preferenceHelper.getLocation()
+    val pair = preferenceHelper.getMapGPSLocation()
 
 
 
     val tempUnit = getTempUnitDisplay(unit)
     val windSpeedUnit = getWindSpeedUnitDisplay(unit)
-
 
 
     var location: Location?
@@ -81,14 +77,14 @@ fun HomeScreen(
                 latitude = pair.first.toDouble()//mapLatitude.toDouble()
                 longitude = pair.second.toDouble()//mapLongitude.toDouble()
             }
-            Log.i("TAG", "PrefrenceMap: ${preferenceHelper.getMapGPSLocation()} ")
+
         } else {
             val gpsLocation by locationState.collectAsStateWithLifecycle()
             location = gpsLocation
             location?.let {
                 preferenceHelper.saveMapGPSLocation(location.latitude, location.longitude)
             }
-            Log.i("TAG", "PrefrenceGPS: ${preferenceHelper.getMapGPSLocation()} ")
+
         }
 
     }
@@ -99,13 +95,6 @@ fun HomeScreen(
         }
     }
 
-
-    /*LaunchedEffect(location) {
-        location?.let {
-            viewModel.fetchCurrentWeather(it.latitude, it.longitude, apiKey)
-            viewModel.fetchWeatherForecast(it.latitude, it.longitude, apiKey)
-        }
-    }*/
 
 
     val currentWeatherState by viewModel.currentWeatherState.collectAsStateWithLifecycle()
@@ -122,8 +111,11 @@ fun HomeScreen(
 
     SwipeRefresh(
         state = swipeRefreshState,
-        onRefresh = { location?.let {  viewModel.fetchWeatherIfLocationChanged(it, isFromFavourite, unit, language)/*viewModel.fetchCurrentWeather(it.latitude, it.longitude,ApiConstants.WEATHER_API_KEY, isFromFavourite, unit, language)
-            viewModel.fetchWeatherForecast(it.latitude, it.longitude,ApiConstants.WEATHER_API_KEY, isFromFavourite, unit, language)*/ } }
+        onRefresh = {
+            location?.let {
+                viewModel.fetchWeatherIfLocationChanged(it, isFromFavourite, unit, language)
+            }
+        }
     ) {
 
         Column(
@@ -135,25 +127,6 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState()),
         ) {
 
-
-            /*val location by locationState.collectAsStateWithLifecycle()
-
-        LaunchedEffect(location) {
-            location?.let {
-                viewModel.fetchCurrentWeather(it.latitude, it.longitude, apiKey)
-                viewModel.fetchWeatherForecast(it.latitude, it.longitude, apiKey)
-            }
-        }*/
-
-            /* LaunchedEffect(Unit) {
-             viewModel.fetchCurrentWeather(31.265, 29.989, apiKey)
-             viewModel.fetchWeatherForecast(31.265, 29.989, apiKey)
-         }*/
-
-
-            /*  val isLoading = currentWeatherState is ResultState.Loading ||
-                hourlyForecastState is ResultState.Loading ||
-                dailyForecastState is ResultState.Loading*/
 
             if (isLoading) {
                 /* Box(

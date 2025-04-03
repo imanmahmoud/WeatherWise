@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -137,8 +138,8 @@ fun MapScreen(isFromFavourite: Boolean) {
 
             Marker(
                 state = markerState,
-                title = "Selected Location",
-                snippet = "Marker at selected location"
+                title = stringResource(R.string.selected_location),
+                snippet = stringResource(R.string.marker_at_selected_location)
             )
         }
 
@@ -193,8 +194,8 @@ fun MapScreen(isFromFavourite: Boolean) {
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Latitude: ${location.latitude}")
-                    Text(text = "Longitude: ${location.longitude}")
+                    Text(text = stringResource(R.string.latitude, location.latitude))
+                    Text(text = stringResource(R.string.longitude, location.longitude))
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
@@ -211,7 +212,7 @@ fun MapScreen(isFromFavourite: Boolean) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Select location",
+                            text = stringResource(R.string.select_location),
                             style = MaterialTheme.typography.titleMedium,
                             color = colorResource(R.color.white),
                             fontWeight = FontWeight.Bold

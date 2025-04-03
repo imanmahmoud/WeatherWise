@@ -56,9 +56,10 @@ class WeatherRepositoryImpl private constructor(private val remoteDataSource: Re
         return localDataSource.deleteFavouriteLocation(favouriteLocation)
     }
 
-    override suspend fun getWeatherData(): Flow<WeatherData> {
-        return localDataSource.getWeatherData()
+    override suspend fun getWeatherData(lat: Double, lon: Double): Flow<WeatherData> {
+        return localDataSource.getWeatherData(lat, lon)
     }
+
 
     override suspend fun insertWeatherData(weatherData: WeatherData):Long{
         return localDataSource.insertWeatherData(weatherData)

@@ -20,9 +20,10 @@ class WeatherLocalDataSourceImpl(private val weatherDao: WeatherDao) : LocalData
         return weatherDao.deleteFavouriteLocation(favouriteLocation)
     }
 
-    override suspend fun getWeatherData(): Flow<WeatherData> {
-       return weatherDao.getWeatherData()
+    override suspend fun getWeatherData(lat: Double, lon: Double): Flow<WeatherData> {
+        return weatherDao.getWeatherData(lat, lon)
     }
+
 
     override suspend fun insertWeatherData(weatherData: WeatherData): Long {
         return weatherDao.insertWeatherData(weatherData)

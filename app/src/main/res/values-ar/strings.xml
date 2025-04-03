@@ -33,4 +33,10 @@
     <string name="settings">الإعدادات</string>
     <string name="hpa">%1$s ه ب ا</string>
     <string name="feels_like">يشعر و كأنه %1$s%2$s</string>
+
+    <string name="selected_location">الموقع المحدد</string>
+    <string name="marker_at_selected_location">علامة في الموقع المحدد</string>
+    <string name="latitude">خط العرض: %1$s</string>
+    <string name="longitude">خط الطول: %1$s</string>
+    <string name="select_location">اختر الموقع</string>
 </resources>

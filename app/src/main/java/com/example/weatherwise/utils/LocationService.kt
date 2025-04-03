@@ -26,11 +26,11 @@ class LocationService(private val context: Context) {
         }.build(), object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                _locationState.value = locationResult.lastLocation
-               /* if (locationResult.lastLocation != null && locationResult.lastLocation!!.latitude !=0.0 && locationResult.lastLocation!!.longitude !=0.0) {
+               // _locationState.value = locationResult.lastLocation
+                if (locationResult.lastLocation != null && locationResult.lastLocation!!.latitude !=0.0 && locationResult.lastLocation!!.longitude !=0.0) {
                     _locationState.value = locationResult.lastLocation
                     fusedLocationProviderClient.removeLocationUpdates(this)
-                }*/
+                }
             }
         }, Looper.myLooper()
         )

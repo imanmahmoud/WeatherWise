@@ -11,7 +11,8 @@ interface LocalDataSource {
     suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation): Long
     suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation): Int
 
-    suspend fun getWeatherData(): Flow<WeatherData>
+
+    suspend fun getWeatherData(lat: Double, lon: Double): Flow<WeatherData>
     suspend fun insertWeatherData(weatherData: WeatherData):Long
 
     suspend fun insertAlert(alert: AlertModel)

@@ -110,11 +110,18 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                             else -> "Unexpected error: ${e.localizedMessage}"
                         }
                         Log.i("TAG", "fetchWeather: errorrrrrrrr: $errorMessage")
-                        if (isFromFavourite) {
+
+
+
+                        getCachedWeatherData(lat, lon)
+
+
+
+                      /*  if (isFromFavourite) {
                             _currentWeatherState.value = ResultState.Failure(errorMessage)
                         } else {
                             getCachedWeatherData()
-                        }
+                        }*/
                     }
                     .collect { weatherData ->
                        Log.i("TAG", "fetchWeather: $weatherData")
@@ -131,7 +138,18 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                             DateTimeHelper.formatUnixTimestampToDate(weatherData/*!!*/.dt.toLong())
                         val currentWeather = weatherData.copy(formattedDt = formattedDate)
                         _currentWeatherState.value = ResultState.Success(currentWeather)
-                         if (!isFromFavourite) {
+
+
+                        lastFetchedWeatherData = WeatherData(
+                            latitude = lat,
+                            longitude = lon,
+                            currentWeatherResponse = currentWeather,
+                            hourlyForecast = emptyList(),
+                            dailyForecast = emptyList()
+                        )
+
+
+                        /* if (!isFromFavourite) {
                              Log.i("TAG", "fetchCurrentWeather: not from fav")
                              lastFetchedWeatherData = WeatherData(
                                  currentWeatherResponse = currentWeather,
@@ -139,7 +157,7 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                                  dailyForecast = emptyList()
                              )
                              //lastFetchedWeatherData.currentWeatherResponse = currentWeather
-                         }
+                         }*/
                     }
             } catch (e: Exception) {
                 Log.i("TAG", "fetchWeather: catch errroooor")
@@ -211,12 +229,31 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
                     _dailyForecastState.value = ResultState.Success(dailyData)
                     Log.i("TAG", "fetchDailyWeather: $dailyData")
 
-                     if (!isFromFavourite) {
+
+
+
+                   /* lastFetchedWeatherData = WeatherData(
+                        latitude = lat,
+                        longitude = lon,
+                        currentWeatherResponse = (currentWeatherState.value as ResultState.Success).data,
+                        hourlyForecast = hourlyData,
+                        dailyForecast =dailyData
+                    )*/
+
+
+                    lastFetchedWeatherData?.hourlyForecast = hourlyData
+                    lastFetchedWeatherData?.dailyForecast = dailyData
+                    insertWeatherData()
+
+
+
+
+                    /* if (!isFromFavourite) {
                          Log.i("TAG", "fetchWeatherForecast: not from fav2")
                          lastFetchedWeatherData?.hourlyForecast = hourlyData
                          lastFetchedWeatherData?.dailyForecast = hourlyData
                          insertWeatherData()
-                     }
+                     }*/
                 }
         }
     }
@@ -242,9 +279,9 @@ class HomeViewModel(private val repo: WeatherRepository) : ViewModel() {
         }
     }
 
-    fun getCachedWeatherData() {
+    fun getCachedWeatherData(lat: Double, lon: Double) {
         viewModelScope.launch {
-            repo.getWeatherData()
+            repo.getWeatherData(lat, lon)
                 .catch { e ->
                     Log.e("TAG", "Error fetching cached weather data: ${e.localizedMessage}")
                 }

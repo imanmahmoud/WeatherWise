@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
             MyWorker.mediaPlayer = null
         }
 
-
         val db = WeatherDatabase.getInstance(context = this)
         val preferenceHelper = PreferenceHelper(context = this)
       //  val language = preferenceHelper.getLanguage()
