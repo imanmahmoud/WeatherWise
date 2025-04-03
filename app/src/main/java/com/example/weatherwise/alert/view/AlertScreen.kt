@@ -9,7 +9,6 @@ import android.os.Build
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.TimePicker
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,7 +62,7 @@ import androidx.wear.compose.material.SwipeableState
 import androidx.wear.compose.material.swipeable
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.weatherwise.MyWorker
+import com.example.weatherwise.alert.MyWorker
 import com.example.weatherwise.data.local.WeatherDatabase
 import com.example.weatherwise.data.local.WeatherLocalDataSourceImpl
 import com.example.weatherwise.data.remote.RetrofitHelper

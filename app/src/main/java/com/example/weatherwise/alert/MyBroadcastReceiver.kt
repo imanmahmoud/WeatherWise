@@ -1,10 +1,10 @@
-package com.example.weatherwise
+package com.example.weatherwise.alert
 
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
+import com.example.weatherwise.MainActivity
 
 class NotificationDismissReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
@@ -22,6 +22,7 @@ class NotificationDismissReceiver : BroadcastReceiver() {
 
 class NotificationNavigateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
+
         MyWorker.mediaPlayer?.stop()
         MyWorker.mediaPlayer?.release()
         MyWorker.mediaPlayer = null
